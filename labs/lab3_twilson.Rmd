@@ -1,0 +1,245 @@
+---
+title: "Stat 5309 Lab 3"
+author: "Tom Wilson"
+date: "Feb 14, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(knitr)
+library(agricolae)
+library(gmodels)
+```
+
+# 1. Data: Casting of High Temperature Alloys-
+A metal alloy is produced by a high temperature casting process.
+The tensile strength of the alloy is critical for its future use.
+The casting process is designed produce bars of alloy with an average tensile strength above minimum requirement. 
+An experiment was planned to isolate the variation in tensile strength due to the effects of different castings.
+30 bars or alloy were produced using the 3 casting methods.
+
+## (a)
+Set up the data frame. 
+There are 30 observations.
+Form a factor vector “casting”. Form a vector of response “strength”
+Form a data named “alloy”.
+
+```{r}
+tensile <- data.frame(type = rep(c("1","2","3"),each=10),
+                      strength = c(88.0, 88.0, 94.8, 90.8, 93.0, 89.0, 86.0, 92.9, 89.0, 93.0,
+                                   85.9, 88.6, 90.0, 87.1, 85.6, 86.0, 91.0, 89.6, 93.0, 87.5,
+                                   94.2, 91.5, 92.0, 96.5, 95.6, 93.8, 92.5, 93.2, 96.2, 92.5))
+tensile %>% kable()
+```
+
+## (b)
+Find the treatment means, treatment vars, treatment standard deviations
+
+```{r}
+treatment_summary <- tensile %>% 
+                     group_by(type) %>% 
+                     summarise(n=length(strength),
+                               treatment_mean = mean(strength),
+                               treatment_var = var(strength),
+                               treatment_sd = sd(strength)
+                               )
+treatment_summary %>% kable()
+```
+
+## (c)
+Do a boxplot, stripchart.
+
+```{r}
+boxplot(tensile$strength~tensile$type)
+```
+
+```{r}
+stripchart(tensile$strength~tensile$type,vertical = TRUE)
+lines(tapply(tensile$strength,tensile$type , mean))
+
+```
+
+## (d)
+Build a linear model, using aov(). Do a summary.lm() and a summary.aov()
+
+```{r}
+tensile_model <- aov(tensile$strength~tensile$type)
+summary.aov(tensile_model)
+```
+
+```{r}
+summary.lm(tensile_model)
+```
+
+## (e)
+Perform a Pairwise.t.test( p.adj=”bonf”)
+
+```{r}
+pairwise.t.test(tensile$strength,tensile$type, p.adj = "bonf")
+```
+
+## (f)
+Perform TukeyHSD(). Plot the TukeyHSD result.
+
+```{r}
+TukeyHSD(tensile_model, conf.level=0.95)
+```
+
+## (g)
+Calculate the power of the F-test in the aov model.
+```{r}
+power.anova.test(n = mean(treatment_summary$n),
+                 groups = length(treatment_summary$type),
+                 between.var = var(treatment_summary$treatment_mean),
+                 within.var = mean(treatment_summary$treatment_var)
+                 )
+```
+
+
+# 2. Data: Detection of Phlebitis on Rabits.
+Rabbits are used as the test animals, randomly assigned to 3 treatment groups. 
+Intravenous needles are inserted in a vein of one ear. 
+Three (3) intravenous treatments are administered to test animals.
+(a) Amiodarone with a vehicle solution 
+(b) Vehicle solution alone
+(c) Saline solution. 
+
+An increase in temperature of the two ears (treated minus untreated) was used as the response
+
+## (a)
+Set up the data frame. 
+There are 23 observations. 
+Create a vector “trt” of 3 levels 
+Create a data frame named rabbits.
+
+```{r}
+rabbits <- data.frame(trt = c(rep("Amiodarone",9),rep("Vehicle",6),rep("Saline",8)),
+                      temp_difference = c( 2.2, 1.6, 0.8, 1.8, 1.4, 0.4, 0.6,1.5, 0.5,
+                                           0.3, 0.0, 0.6, 0.0, -0.3, 0.2,
+                                           0.1, 0.1, 0.2, -0.4, 0.3, 0.1, 0.1,-0.5)
+                      )
+rabbits %>% kable()
+```
+
+## (b)
+Perfom treatment means, treatment variances, treatment standard deviations
+```{r}
+treatment_summary <- rabbits %>% 
+                     group_by(trt) %>% 
+                     summarise(n=length(temp_difference),
+                               trt_mean = mean(temp_difference) %>% round(4),
+                               trt_var = var(temp_difference) %>% round(4),
+                               trt_sd = sd(temp_difference) %>% round(4)
+                               ) 
+treatment_summary %>% kable()
+```
+
+
+## (c)
+Boxplot. Strip chart.
+```{r}
+boxplot(rabbits$temp_difference~rabbits$trt)
+```
+
+```{r}
+stripchart(rabbits$temp_difference~rabbits$trt,vertical = TRUE)
+lines(tapply(rabbits$temp_difference,rabbits$trt , mean))
+
+```
+
+## (d)
+Build a linear model,using aov(). Summary
+
+```{r}
+rabbit_model <- aov(rabbits$temp_difference~rabbits$trt)
+summary.aov(rabbit_model)
+```
+
+```{r}
+summary.lm(rabbit_model)
+```
+
+## (e)
+Perform pairwise t -test.
+```{r}
+pairwise.t.test(rabbits$temp_difference,rabbits$trt , p.adj = "bonf")
+```
+
+
+## (f)
+Perform TukeyHSD. Plot the TukeyHSD result.
+
+```{r}
+TukeyHSD(rabbit_model)
+```
+
+```{r}
+plot(TukeyHSD(rabbit_model))
+```
+
+# 3
+The response time in milliseconds was determined for three different types of circuits taht could be used in an automatic valve shutoff mechanism. The results are shown in the following table:
+
+```{r}
+circuit <- data.frame(type = rep(c("1","2","3"),each=5),
+                      response_time = c(9,12,10,8,15,
+                                        20,21,23,17,30,
+                                        6,5,8,16,7)
+                      )
+circuit %>% kable()
+```
+
+## a
+Test the hypothesis that the three circuit types have the same response time. use $\alpha=0.01$
+
+```{r}
+circuit_model <- aov(circuit$response_time~circuit$type)
+circuit_model_summary <- summary(circuit_model)
+circuit_model_anova <- anova(circuit_model)
+circuit_model_anova$`Pr(>F)`
+```
+Under the null hypothesis that the treatment means are equivalent to the grandmean, the probability of observing a larger difference in means is 62%. At a confidence of 1% we fail to reject the null hypothesis and conclude that at least 1 of the treatment means is not equal to the grand mean.
+
+## b
+Use Tukey's test to compare pairs of treatment means. Use $\alpha=0.01$.
+
+```{r}
+TukeyHSD(circuit_model)
+```
+
+## c
+Use the graphcial procedure in Section 3-5.3 to compare the treatment means. What conclusions can you draw? How do they compare with the conclusions from part (b).
+
+```{r}
+plot(TukeyHSD(circuit_model))
+```
+
+
+## d
+Constuct a set of othagonal contrasts, asssuming that at the outset of the experiment you suspected the response time of circuit type 2 to be different from the other two.
+
+```{r}
+circuit_lm <- lm(response_time ~ type, data = circuit)
+fit.contrast(circuit_lm, 
+             "type", 
+             rbind("type2"=c(0,-1,0)),
+             conf.int=0.95
+             )
+```
+
+## e
+If you were the design engineer an you wished to minimize the response time, which circuit type would you select?
+
+circuit type3 has a significantly faster response time.
+
+## f
+Analyse the residuals from this experiment. Are the basic analysis of variance assumptions satisfied?
+
+```{r}
+qqnorm(circuit_model$residuals)
+qqline(circuit_model$residuals)
+```
+
+There are 2 large outliers on the high end.

@@ -1,0 +1,134 @@
+---
+title: "Stat 5309 Lab 1"
+author: "Tom Wilson"
+date: "January 18, 2019"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 1.
+Data: Bottle Filling Machines. 
+Two machines are used to fill plastic bottles with a volume of 16.0 onces.
+The process can be assumed to be normal, with $\sigma_1 = 0.015$, $\sigma_2 =0.018$. An experiment is performed.
+
+```{r}
+machine_1 <- c(16.03, 16.01, 16.04, 15.96, 16.05,
+               15.98, 16.05, 16.02, 16.02, 15.99
+               )
+
+machine_2 <- c(16.02, 16.03, 15.97, 16.04, 15.96,
+               16.02, 16.01, 16.01, 15.99, 16.00
+               )
+```
+
+## a
+Test hypothesis: $H_0: \mu_1 = \mu_2$ . 
+
+use a z-test because the process is normal and the variance(s) are known.
+
+```{r}
+n <- length(machine_1)
+machine_1_sigma <- 0.015
+machine_2_sigma <- 0.018
+pooled_sigma <- sqrt(machine_1_sigma^2 + machine_2_sigma^2)
+SE = pooled_sigma/sqrt(n)
+
+machine_1_mu <- mean(machine_1)
+machine_2_mu <- mean(machine_2)
+mu_diff <- machine_1_mu - machine_2_mu
+
+CL <- 0.95
+alpha = 1 - CL
+half_alpha = alpha/2
+z = mu_diff/SE
+p_value = 1 - pnorm(z)
+mu_diff
+p_value
+```
+The difference between the means is 0.01.
+Given the null hypothesis, the probability of observing a difference at least this extreme is 8.8%. at a confidence level of 5% we would fail to reject the null hypothesis and conclude that there is no difference between machine 1 and machine 2.
+
+
+## b
+Find the P-value for the test.
+
+The p-value is calculated above as 8.8%
+
+## c
+Find the 95%-CI for the difference of the population means.
+
+```{R}
+z_critical <- qnorm(1-half_alpha)
+CI=c(mu_diff-z_critical*SE , mu_diff+z_critical*SE)
+CI
+```
+the difference between the means is between -0.0045 and 0.0245.
+Since this interval contains 0, it is consistent with the conclusion in part a.
+
+## d
+Perform a boxplot and a stripchart with line connecting means.
+
+
+```{R}
+y <- data.frame(machine_1,machine_2)
+names(y) <-c("machine_1", "machine_2")
+y.means <- apply(y,2,mean)
+stripchart(y, xlab="oz", vertical=TRUE,pch=16)
+lines(y.means)
+```
+```{R}
+boxplot(y)
+```
+
+# 2.
+Data: Burning times of Chemical Flares.
+
+```{r}
+type_1 <- c(65,82,81,67,57,59,66,75,82,70)
+
+type_2 <- c(64,56,71,69,83,74,59,82,65,79)
+```
+
+**Perform by R . Only use var.test() to check**
+
+## a
+Test the hypothesis that the two variances are equal. $\alpha = 0.05$
+
+```{R}
+var.test(type_1,type_2)
+```
+
+under the null hypothesis of equal variance, we would expect would expect an F stat this extreme 97% of the time. At a confidence of 5%, we fail to reject the null hypothesis and conclude that the variance of test1 is the same as that of test2. 
+
+## b
+Test the hypothesis that the burning times are equal. 
+
+```{R}
+t.test(type_1,type_2,var.equal = TRUE)
+```
+
+Test statistics, t = 0.048 with 18 degrees of freedom
+
+P-value = 0.9622
+
+Conclusion.
+
+Given that the means are equal, we would expect a difference at least this great 96% of the time. At a confidence level of 5% we would fail to reject the null hypothesis and conclude that the means are indeed the same.
+
+## c
+Check the normality assumption for both types of flares.
+
+```{R}
+qqnorm(type_1,main="Quantile-Quantile plot for Type 1")
+qqline(type_1)
+```
+
+```{r}
+qqnorm(type_2,main="Quantile-Quantile plot for Type 1")
+qqline(type_2)
+```
+
+Visually, the quantiles of both type1 and type2 closely match that of a normal distribution.

@@ -1,0 +1,104 @@
+---
+title: "Stat 5309 Lab 4a"
+author: "Tom Wilson"
+date: "Feb 16, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(knitr)
+library(agricolae)
+```
+
+# 1.
+A chemist wishes to test the effect of four chemical agents on the strength of a particular type of cloth. 
+Because there might be variablility from one bolt to another, the chemist decides to use a randomized block design, with the bolts of cloth considered as blocks. 
+She selects five bolts and applies all four chemicals in random order to each bolt. 
+The resulting tensile strengths follow. 
+Analyze the data from this experiment ( use $$ \alpha = 0.05 $$ ) and draw appropriate conclusions.
+
+```{r}
+bolts <- c("b1","b2","b3","b4","b5")
+chemicals <- c("c1","c2","c3","c4")
+chem_data <- expand.grid(bolt = bolts,chemical = chemicals)
+chem_data <- cbind(chem_data,observations = c(73,68,74,71,67,
+                                              73,67,75,72,70,
+                                              75,68,78,73,68,
+                                              73,71,75,75,69))
+chem_data %>% kable()
+```
+ 
+## a
+Create a vector for Blocks, named "Bold": 5 levels. Total 20.
+Create a vector for Treatments, named "Chemical". Total 20.
+Create a response vector, named "Strength". Set up the data frame named "chem".
+
+## b
+Any evidence that the Chemical affect Strength?
+
+## c
+Perform a TukeyHSD to compare the the treatment means. Which chemical is the preferred (bring the highest strengh)
+
+## d
+Check the assumption of the residuals.
+
+
+# 2.
+
+Three different washing solutions are being compared to study their effectiveness in retarding bacteria growth in 5-gallon milk containers.
+The analysis is done in a laboratory, and only three trials can be run on any day.
+Because days could represent a potential source of variability, the experimenter decides to use a randomized block design.
+Observations are taken for four days, and the data are shown here.
+Analyze the data from this experiment (use $$ \alpha=0.05 $$ ) and draw conclusions.
+
+## e
+Create a vector for blocks named days 4 levels total 12.
+Create a vector for treatments named solutions total 12.
+create a response vector named Growth set up the data frame.
+
+```{r}
+solutions <- c("d1","d2","d3","d4")
+days <- c("s1","s2","s3")
+bacteria_data <- expand.grid(solution = solutions, day = days)
+bacteria_data <- cbind(bacteria_data, observations = c(13,22,18,39,
+                                                       16,24,17,44,
+                                                       5,4,1,22))
+bacteria_data %>% kable()
+```
+
+## f
+Any evidence that the solutions affect bacteria growth?
+
+## g
+Perform a TukeyHSD to compare the the treatment means. Which chemical is the preferred (brings the lowest bacterial growth)
+
+## h
+Check the assumption of the residuals.
+
+# 3.
+An aluminum master alloy manufacturer produces grain refiners in ingot form. The company produces the product in four furnaces. Each furnace is known to have its own unique operating characterisitcs, so any experiment run in the foundry that involves more than one furnace will consider furnaces as a nuisance variable. The process engineers suspect that stirring rate affects the grain size of the product. Each furnace can be run at four different stirring rates. A randomized block design is run fro a particular refiner and the resulting grain size data is shown below.
+
+```{r}
+stir_rates <- c("5","10","15","20")
+furnaces <- c("f1","f2","f3","f4")
+aluminum_data <- expand.grid(stir_rate = stir_rates,furnace = furnaces)
+aluminum_data <- cbind(aluminum_data, observations = c(8,4,5,6,
+                                                       14,5,6,9,
+                                                       14,6,9,2,
+                                                       17,9,3,6))
+aluminum_data %>% kable()
+```
+
+## a
+Is there any evidence that stirring rate affects grain size?
+
+## b
+Graph the residuals from this experiment on a normal probability plot. Interpret this plot.
+
+## c
+Plot the residuals versus furnace and stirring rate. Does this plot convey any useful information?
+
+## d
+What should the process engineers recommend concerning the choice of stirring rate and furnace for this particular grain refiner if small grain size is desirable?

@@ -1,0 +1,102 @@
+---
+title: "Stat 5309 Lab 0"
+author: "Tom Wilson"
+date: "January 18, 2019"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Exercise 1.
+
+## Distributions
+
+### Histogram of normally distributed sample data
+```{r}
+s1 <- rnorm(100,0,1)
+hist(s1)
+```
+
+
+### density curve of normal distribution
+```{r}
+x <- seq(-4,4,0.1)
+hx <- dnorm(x,0,1)
+plot(x,hx,pch=16,cex=0.01)
+```
+
+### density curve of some t-distribution
+```{r}
+t_ <- x
+ht <- dt(t_,10)
+plot(t_,ht,cex=0.01)
+```
+
+### density curve of some chi-squared distributions
+
+```{r}
+chi_sq <- seq(0,50,0.5)
+hchi_sq <- dchisq(chi_sq,5)
+plot(chi_sq,hchi_sq,pch=16,cex=0.01)
+```
+
+### density curve of some F-distributions
+```{r}
+f_ <- seq(0,50,0.5)
+hf <- df(f_,3,20)
+plot(f_,hf,pch=16,cex=0.1)
+```
+
+# Exercise 2.
+## Check normality of data
+```{r}
+data <- c( 26.4
+,23.5
+,25.4
+,22.9
+,25.2
+,39.2
+,25.5
+,31.9
+,26.0
+,44.6
+,35.5
+,38.6
+,30.1
+,31.0
+,30.8
+,32.8
+,47.7
+,39.1
+,55.3
+,50.7
+,73.8
+,71.1
+,68.4
+,77.1
+,19.4
+,19.3
+,18.7
+,19.0
+,23.2
+,21.3
+,23.2
+,19.9
+,18.9
+,19.8
+,19.6
+,21.9
+)
+hist(data)
+```
+
+```{r}
+data_s <- sort(data)
+rank_data <- rank(data_s)
+size_data <- length(data_s)
+p_ <- (rank_data-0.5)/size_data
+z_quantile <- qnorm(p_)
+plot(z_quantile,data_s,pch=16)
+```

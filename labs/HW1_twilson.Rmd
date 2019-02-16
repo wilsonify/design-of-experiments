@@ -1,0 +1,196 @@
+---
+title: "Stat 5309 HW 1"
+author: "Tom Wilson"
+date: "January 31, 2019"
+output: word_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(dplyr)
+```
+# 1
+A new filtering device is installed ina chemical unit. Before its installation, a random sample yielded the following information about the percentage of impurity: $\bar{y_1} = 12.5$, $S_{1}^2 = 101.17$, and $n_1 = 8$. After installation, a random sample yielded $\bar{y_2} = 10.2$, $S_{2}^2 = 94.73$, $n_2 = 9$
+
+## a
+Can you conclude that the two variances are equal? Use $\alpha = 0.05$
+
+The null hypothesis is that the two variances are equal, $\sigma^2_1 = \sigma^2_2$.
+The ratio of the sample variances is F-distributed with n-1 and n-2 degrees of freedom.
+
+```{r}
+bar_y_1  <-  12.5
+s_1_squared  <-  101.17
+n_1  <-  8
+nu_1 <- n_1 - 1
+#After installation
+bar_y_2  <-  10.2
+s_2_squared <- 94.73
+n_2  <-  9
+nu_2 <- n_2 - 1
+
+f_stat <- s_1_squared / s_2_squared
+left_tail <- pf(1/f_stat,nu_1,nu_2)
+right_tail <- 1 - pf(f_stat,nu_1,nu_2)  
+p_value <- left_tail + right_tail
+p_value
+```
+
+Under the null hypothesis, we would expect a difference in means at least this extreme 93% of the time. At a confidence level of 5%, we would fail to reject the null hypothesis and conclude that the variances are equal.
+
+## b
+Has the filtering device reduced the percentage of impurity significantly? Use $\alpha = 0.05$.
+
+The null hypothesis is that the two averages are equal, $\mu_1 = \mu_2$.
+The distribution of differences is t-distributed with pooled variance and $n_1+n_2-2 = 15$ degrees of freedom. 
+
+```{r}
+mean_difference <- bar_y_1 - bar_y_2
+pooled_variance <- ((n_1-1)*s_1_squared + (n_2-1)*s_2_squared)/(n_1+n_2-2)
+t_stat <- mean_difference/(pooled_variance*sqrt(1/n_1 + 1/n_2))
+df <- n_1 + n_2 - 2
+
+alpha <- 0.05
+half_alpha <- alpha/2
+t_critical_left <- qt(half_alpha,df)
+t_critical_right <- qt(1-half_alpha,df) 
+p_value <- pt(-abs(t_stat),df) + 1-pt(abs(t_stat),df)
+
+```
+
+Under the null hypothesis, we would expect a difference in means at least this extreme 96% of the time. At a confidence level of 5%, we fail to reject the null hypothesis and conclude that the filtering device has not significantly reduced impurity.
+
+# 2
+Twenty observations on etch uniformity on silicon wafers are taken during a qualification experiment for a plasma etcher. The data are as follows.
+
+```{r}
+uniformity <- c(5.34,6.65,4.76,5.98,7.25,
+                6.00,7.55,5.54,5.62,6.21,
+                5.97,7.35,5.44,4.39,4.98,
+                5.25,6.35,4.61,6.00,5.32
+                )
+
+
+```
+
+## a
+construct a 95% confidence interval estimate of $\sigma^2$.
+
+Assuming that the population is normally distributed, $\frac{SS}{\sigma^2}$ will be $\chi^2$ distributed with n-1 degrees of freedom. 
+
+```{r}
+n <- length(uniformity)
+df <- n-1
+bar_x <- mean(uniformity)
+s_squared <- var(uniformity)
+s <- sqrt(s_squared)
+sum_of_squares <- df*s_squared
+chi_stat <- sum_of_squares/s_squared
+alpha <- 0.05
+half_alpha <- alpha/2
+chi_critical_left  <- qchisq(half_alpha,df)
+chi_critical_right <- qchisq(1-half_alpha,df)
+
+right_bound = sum_of_squares/chi_critical_left
+left_bound = sum_of_squares/chi_critical_right
+
+paste(left_bound,right_bound)
+
+```
+
+The best estimate of $sigma^2$ is the sample variance of 0.79. If this experiment were repeated, we can expect 95% of the sample variances to be between 0.4571 and 1.6892
+
+
+## b
+test the hypothesis that $\sigma^2 = 1.0$. Use $\alpha=0.05$. What are your conclusions?
+
+```{r}
+s_0 <- 1.0
+chi_stat_right <- sum_of_squares/s_0
+chi_stat_left <-  s_0/sum_of_squares
+alpha <- 0.05
+half_alpha <- alpha/2
+left_tail  <- pchisq(chi_stat_left,df)
+right_tail <- 1 - pchisq(chi_stat_right,df)
+p_value <- left_tail + right_tail
+p_value
+```
+
+Given the null hypothesis that the true variance is 1.0, we would expect to observe a $\chi^2$ statistic that is at least this extreme 72% of the time. at a confidence level of 5%, we fail to reject the null hypothesis and conclude that the variance is not significantly different from 1.0.
+
+## c
+Discuss the normality assumption and its role in this problem.
+
+In order to know the distribution of $SS/\sigma^2$ we must make some assumption about the distribution of the measurement itsself. The most reasonable assumption is that the population is normally distributed because uniformity is a function of many inputs. 
+
+## d
+Check normality by constructing a normal probability plot. What are your conclusions?
+```{r}
+qqnorm(uniformity)
+qqline(uniformity)
+```
+
+The quantiles of the uniformity measurements very nearly match that of a normal distribution. The three largest values are larger than expected, but not significantly.
+
+# 3
+The diameter of a ball bearing was measured by 12 inspectors, each using two different kinds of calipers. The results were:
+
+```{r}
+bearings <- data.frame(inspector = seq(1,12),
+                       caliper1 = c(0.265,0.265,0.266,0.267,0.267,0.265,0.267,0.267,0.265,0.268,0.268,0.265),
+                       caliper2 = c(0.264,0.265,0.264,0.266,0.267,0.268,0.264,0.265,0.265,0.267,0.268,0.269)
+                       )
+```
+
+## a 
+Is there a significant difference between the means of the population of measurements from which the two samples were selected? Use $\alpha 0.05$.
+                       
+Since each pair of measurements is taken by the same inspector a paired t-test is appropriate.
+
+```{r}
+paired_differences <- bearings$caliper1 - bearings$caliper2
+hist(paired_differences)
+```
+
+The null hypothesis is that the paired difference is zero, $\delta = 0$.
+The distribution of differences is t-distributed with variance estimated by the variance of the differences and $n-1 = 11$ degrees of freedom. 
+                                              
+```{r}
+bar_d <- mean(paired_differences)
+n  <- length(bearings$caliper1)
+s_d <- sd(paired_differences)
+nu <- n-1
+SE <- s_d/sqrt(n)
+t_stat <- bar_d/(SE)
+alpha <- 0.05
+half_alpha <- alpha/2
+t_critical_left <- qt(half_alpha,nu)
+t_critical_right <- qt(1-half_alpha,nu) 
+t_stat
+paste(t_critical_left,t_critical_right)
+
+```
+The t-statistic of 0.43 is between the critical t-statistics of $\pm2.201$. Therefore, we fail to reject the null hypothesis and conclude that the measurements from the two calipers are not significantly different. 
+
+## b
+Find the p-value for the test in part a.
+
+```{r}
+p_value <- pt(-abs(t_stat),nu) + 1-pt(abs(t_stat),nu)
+p_value
+```
+The p-value is about 67%. Given that there is no difference, we can expect a difference at least this large 67% of the time.
+
+## c 
+Construct a 95% confidence interval on the difference in mean diameter measurements for the two types of calipers.
+
+```{r}
+t_critical_left <- qt(half_alpha,nu)
+t_critical_right <- qt(1-half_alpha,nu) 
+left_bound <- t_critical_left * SE
+right_bound <- t_critical_right * SE
+paste(left_bound,right_bound)
+
+```
+At a confidence level of 95%, a mean difference with magnitude larger than 0.0012 is statistically different from zero.
