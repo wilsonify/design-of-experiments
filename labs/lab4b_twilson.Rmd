@@ -1,7 +1,7 @@
 ---
 title: "Stat 5309 Lab 4b"
 author: "Tom Wilson"
-date: "Feb 20, 2019"
+date: "Feb 21, 2019"
 output: pdf_document
 ---
 
@@ -87,6 +87,26 @@ An industrial engineer is investigating the effect of four assembly methods (A,B
 
 ## a
 setup the dataframe.
+
+```{r}
+operators <- c("1","2","3","4")
+assembly_order <- c("1","2","3","4")
+tv_component <- expand.grid(operator = operators,
+                            assembly = assembly_order
+                            )
+tv_component <- cbind(tv_component,
+                      treatment = c("C","D","A","B",
+                                     "B","C","D","A",
+                                     "A","B","C","D",
+                                     "D","A","B","C"
+                                     ),
+                      time = c(10,14,7,8,
+                                7,18,11,8,
+                                5,10,11,9,
+                                10,10,12,14)
+                      )
+tv_component %>% kable()
+```
 
 ## b
 build a linear odel using aov. Do the treatments affect the assembly time?
