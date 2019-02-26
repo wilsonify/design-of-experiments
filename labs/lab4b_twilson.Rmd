@@ -39,11 +39,37 @@ Are the subject means significantly different?
 
 Are the Distance means significantly different?
 
+```{r}
+eye_model <- aov(time ~ subject+distance,data = eye)
+eye_anova <- anova(eye_model)
+eye_anova
+```
+
+Based on F statistics, there is evidence that both subject and distance have significantly different means.
+
 ## c
 Which distances bring the longest/shortest focus time?
+```{r}
+dist_means <- eye %>% 
+              group_by(distance) %>% 
+              summarise(mean=mean(time))
+```
+
+distance of 4 has the highest average time.
+distance of 10 has the lowest average time.
 
 ## d
 Calculate the sample size (number of treatment replicates) for power > 0.90
+
+```{r}
+power.anova.test(groups = 4, 
+                 between.var = var(dist_means$mean),
+                 within.var = eye_anova$`Mean Sq`[3],
+                 power=0.9
+                 )
+```
+
+need 4 replicates to have a power of 0.9
 
 # 2
 The effect of five different ingredients (A,B,C,D,E) on the reaction time of a chemical process is being studied. Each batch of new material is only large enough to permit five runs to be made. Furthermore, each run requires approximately  1.5 hours, so only five runs can be made in one day. The experimenter decides to run the experiment as a latin square so that day and batch effects may be systematically controlled. She obtains data that follow. Analyze the data from this experiment (use $$ \alpha = 0.05 $$ ) and draw conclusions.
