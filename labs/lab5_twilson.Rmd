@@ -1,0 +1,43 @@
+---
+title: "Stat 5309 Lab 4b"
+author: "Tom Wilson"
+date: "Feb 21, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(knitr)
+library(agricolae)
+```
+
+# 1.
+
+The yield of a chemical process is being studied. The two most important variables are thought ot be th pressure and the temperature. Three levels of each factor are selected and a factorial experiment with two replicates is performed. The yield data follows.
+
+## a
+Set up the dataframe.
+
+## b
+Build a linear model using aov(). Are the pressure means significant? Are the temp means significant? Is the interaction significant?
+
+## c
+Create a boxplot of 
+yield vs temp
+yield vs pressure
+yield vs temp and pressure
+
+## d
+Perform a residuals assumption check
+
+# 2
+Johnson an dLeone describe an experiment to investigate warping of copper plates. The two factors studied were the temperature and the copper content of the plates. The response variable was a meaure of the amont of warping. The data were as follows.
+
+## a
+Set up the dataframe 
+
+## b
+build a response model surface (RSM) with warpage as response, use rsm().
+
+
