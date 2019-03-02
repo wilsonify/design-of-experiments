@@ -105,8 +105,31 @@ build a linear model using aov. Do the ingredients affect the reaction time?
 Day means, Batch means, Ingredient means, are significantly different?
 Check interaction between day and batch.
 
+```{r}
+chem_model <- aov(time ~ ingredient+batch+day, data = chemical)
+chem_anova <- anova(chem_model)
+chem_anova
+
+```
+
+Ingredient is significantly different, but day and bath are not.
+
+
+```{r}
+interaction.plot(x.factor = chemical$day,
+                 trace.factor = chemical$batch,
+                 response = chemical$time)
+```
+There are many potential interactions between day and batch.
+It can be difficult to judge because the number of replicates is 1.
+
 ## c
 Find the lowest reaction time.
+
+```{r}
+chemical %>% group_by() %>% 
+              summarise(mean=mean(time))
+```
 
 # 3
 An industrial engineer is investigating the effect of four assembly methods (A,B,C,D) on the assembly time for a color television component. Four operators are selected for the study. Furthermore, the engineer knows that each assembly method produces such factigue that the time required for the last assembly may be greater than the time required for the first, regardless of the method. That is, a trend develops in the required assembly time. To account for this source of variability, the engineer uses the Latin square design shown below. Analyze the data from this experiment and draw appropriate conclusions.
@@ -135,181 +158,27 @@ tv_component %>% kable()
 ```
 
 ## b
-build a linear odel using aov. Do the treatments affect the assembly time?
+build a linear model using aov. Do the treatments affect the assembly time?
 Operator means, assembly means, treatment means, are they significantly different?
+
+```{r}
+tv_model <- aov(time ~ treatment+assembly+operator,
+                data=tv_component)
+summary(tv_model)
+```
+
+Treatment and operator are significant, while assembly order is not.
 
 ## c
 Find the lowest assembly time.
 
-
-
-
-# 1.
-A chemist wishes to test the effect of four chemical agents on the strength of a particular type of cloth. 
-Because there might be variablility from one bolt to another, the chemist decides to use a randomized block design, with the bolts of cloth considered as blocks. 
-She selects five bolts and applies all four chemicals in random order to each bolt. 
-The resulting tensile strengths follow. 
-Analyze the data from this experiment ( use $$ \alpha = 0.05 $$ ) and draw appropriate conclusions.
-
-## a
-Create a vector for Blocks, named "Bold": 5 levels. Total 20.
-Create a vector for Treatments, named "Chemical". Total 20.
-Create a response vector, named "Strength". Set up the data frame named "chem".
-
 ```{r}
-bolts <- c("b1","b2","b3","b4","b5")
-chemicals <- c("c1","c2","c3","c4")
-chem_data <- expand.grid(bolt = bolts,chemical = chemicals)
-chem_data <- cbind(chem_data,strength = c(73,68,74,71,67,
-                                              73,67,75,72,70,
-                                              75,68,78,73,68,
-                                              73,71,75,75,69))
-chem_data %>% kable()
-```
- 
-
-## b
-Any evidence that the Chemical affect Strength?
-
-```{r}
-boxplot(strength~chemical,data=chem_data)
+tv_component %>% 
+  group_by(treatment) %>% 
+  summarise(time_mean = mean(time),
+            time_std = sd(time)) %>% 
+  kable()
 ```
 
-visually, there is a small difference in strength based on chemical. 
+Treatement A is associated with the lowest assembly time.
 
-```{r}
-interaction.plot(chem_data$chemical,chem_data$bolt, chem_data$strength)
-```
-
-On closer inspection, the effect of chemical is consistent across different bolts (not much interaction).
-
-
-## c
-Perform a TukeyHSD to compare the the treatment means. Which chemical is the preferred (bring the highest strengh)
-
-```{r}
-strength_model <- aov(strength~chemical+bolt,data = chem_data)
-TukeyHSD(strength_model, conf.level=0.95)
-```
-
-at a confidence of 95%, there are no significant differences in strength between chemicals.
-
-## d
-Check the assumption of the residuals.
-```{r}
-qqnorm(strength_model$residuals)
-qqline(strength_model$residuals)
-
-```
-
-The quantiles of the residual closely match the quantiles of a normal distribution.
-
-# 2.
-
-Three different washing solutions are being compared to study their effectiveness in retarding bacteria growth in 5-gallon milk containers.
-The analysis is done in a laboratory, and only three trials can be run on any day.
-Because days could represent a potential source of variability, the experimenter decides to use a randomized block design.
-Observations are taken for four days, and the data are shown here.
-Analyze the data from this experiment (use $$ \alpha=0.05 $$ ) and draw conclusions.
-
-## e
-Create a vector for blocks named days 4 levels total 12.
-Create a vector for treatments named solutions total 12.
-create a response vector named Growth set up the data frame.
-
-```{r}
-days <- c("d1","d2","d3","d4")
-solutions <- c("s1","s2","s3")
-bacteria_data <- expand.grid(solution = solutions, day = days)
-bacteria_data <- cbind(bacteria_data, growth = c(13,22,18,39,
-                                                       16,24,17,44,
-                                                       5,4,1,22))
-bacteria_data %>% kable()
-```
-
-## f
-Any evidence that the solutions affect bacteria growth?
-
-```{r}
-boxplot(growth~solution,data=bacteria_data)
-```
-Visually, there is not much difference in growth based on solution.
-
-```{r}
-interaction.plot(bacteria_data$solution,bacteria_data$day, bacteria_data$growth)
-```
-On closer inspection, there could be some significant interactions between solution and day.
-
-## g
-Perform a TukeyHSD to compare the the treatment means. Which chemical is the preferred (brings the lowest bacterial growth)
-
-```{r}
-growth_model <- aov(growth~solution+day,data = bacteria_data)
-TukeyHSD(growth_model, conf.level=0.95)
-```
-
-Comparing pair-wise, there is no significant difference growth between solutions or days.
-
-
-## h
-Check the assumption of the residuals.
-
-```{r}
-qqnorm(growth_model$residuals)
-qqline(growth_model$residuals)
-```
-
-The residuals are very close to normally distributed.
-
-# 3.
-An aluminum master alloy manufacturer produces grain refiners in ingot form. The company produces the product in four furnaces. Each furnace is known to have its own unique operating characterisitcs, so any experiment run in the foundry that involves more than one furnace will consider furnaces as a nuisance variable. The process engineers suspect that stirring rate affects the grain size of the product. Each furnace can be run at four different stirring rates. A randomized block design is run fro a particular refiner and the resulting grain size data is shown below.
-
-```{r}
-stir_rates <- c("5","10","15","20")
-furnaces <- c("f1","f2","f3","f4")
-aluminum_data <- expand.grid(stir_rate = stir_rates,furnace = furnaces)
-aluminum_data <- cbind(aluminum_data, grain_size = c(8,4,5,6,
-                                                       14,5,6,9,
-                                                       14,6,9,2,
-                                                       17,9,3,6))
-aluminum_data %>% kable()
-```
-
-## a
-Is there any evidence that stirring rate affects grain size?
-```{r}
-boxplot(grain_size~stir_rate,data=aluminum_data)
-```
-
-Visually, the slowest stir rate (5 rpm) has a dramatically larger grain size.
-```{r}
-interaction.plot(aluminum_data$stir_rate,aluminum_data$furnace, aluminum_data$grain_size)
-```
-On closer inspection, the effect of stir rate on grain size is consistent across different furnaces.
-
-## b
-Graph the residuals from this experiment on a normal probability plot. Interpret this plot.
-
-```{r}
-grain_model <- aov(grain_size~stir_rate+furnace,data=aluminum_data)
-qqnorm(grain_model$residuals)
-qqline(grain_model$residuals)
-```
-
-## c
-Plot the residuals versus furnace and stirring rate. Does this plot convey any useful information?
-
-```{r}
-plot(x=aluminum_data$furnace,y=grain_model$residuals)
-```
-This plot shows unequal variance among furnaces included in the model.
-
-## d
-What should the process engineers recommend concerning the choice of stirring rate and furnace for this particular grain refiner if small grain size is desirable?
-
-```{r}
-TukeyHSD(grain_model, conf.level=0.95)
-```
-
-Stir rate of 5 produces the largest grain size.
-Choice of furnace is not significant.
