@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(knitr)
 library(agricolae)
+library(rsm)
 ```
 
 # 1.
@@ -37,14 +38,43 @@ process %>% kable()
 ## b
 Build a linear model using aov(). Are the pressure means significant? Are the temp means significant? Is the interaction significant?
 
+```{r}
+yield_model <- aov(yield ~ temperature * pressure, data=process)
+summary(yield_model)
+```
+The interaction between temperature and pressure is not significant.
+The main effects of temperature and pressure are significant.
+
+```{r}
+yield_model <- aov(yield ~ temperature + pressure, data=process)
+summary(yield_model)
+```
+
 ## c
-Create a boxplot of 
-yield vs temp
-yield vs pressure
-yield vs temp and pressure
+Create a boxplot of
+
+### yield vs temp
+```{r}
+boxplot(yield~temperature, data=process)
+```
+
+### yield vs pressure
+```{r}
+boxplot(yield~pressure, data=process)
+```
+
+### yield vs temp and pressure
+```{r}
+boxplot(yield~temperature*pressure, data=process)
+```
 
 ## d
 Perform a residuals assumption check
+```{r}
+qqnorm(yield_model$residuals)
+qqline(yield_model$residuals)
+```
+The residuals are consistent with a normal distribution centered on zero with constant variance.
 
 # 2
 Johnson an dLeone describe an experiment to investigate warping of copper plates. The two factors studied were the temperature and the copper content of the plates. The response variable was a meaure of the amont of warping. The data were as follows.
@@ -71,5 +101,11 @@ copperplate %>% kable()
 
 ## b
 build a response model surface (RSM) with warpage as response, use rsm().
+```{r}
+temp_nums <- copperplate$temperature %>% as.numeric()
+cu_nums <- copperplate$copper_content %>% as.numeric()
+response <- copperplate$warping
+copper_model<- rsm(response ~ SO(temp_nums, cu_nums), data=copperplate)
+summary(copper_model)
 
-
+```
