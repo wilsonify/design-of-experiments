@@ -1,5 +1,5 @@
 ---
-title: "Stat 5309 Lab 4b"
+title: "Stat 5309 Lab 5"
 author: "Tom Wilson"
 date: "Feb 21, 2019"
 output: pdf_document
