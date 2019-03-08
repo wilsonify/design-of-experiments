@@ -1,0 +1,318 @@
+---
+title: "Stat 5309 Midterm Project"
+author: "Tom Wilson"
+date: "Mar 21, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(knitr)
+library(agricolae)
+library(rsm)
+```
+
+
+# 1
+The effective life of insulating luids at an accelerated load of 35 kV is being studied.
+Test data have been obtained for four types of fluids. The results were as follows:
+
+## a
+Either read data into R or create the dataframe.
+
+```{r}
+fluidtypes <- c("1","2","3","4")
+data <- data.frame(fluid = rep(fluidtypes,each=6)
+                   ,lifetime=c(17.6,18.9,16.3,17.4,20.1,21.6,
+                               16.9,15.3,18.6,17.1,19.5,20.3,
+                               21.4,23.6,19.4,18.5,20.5,22.3,
+                               19.3,21.1,16.9,17.5,18.3,19.8
+                               ))
+data %>% kable()
+```
+
+## b
+Build a linear model, using aov. Is there a significant difference among treatment means?
+which fluid gives the longer life?
+
+## c
+Construct a 95% Confidence Interval for themean life of fluid 2.
+Construct a 99% Confidence Interval for the difference between the lives of Fluids 2 and 3.
+
+## d
+Performa complete 3-part residuals check.
+
+## e
+Calculate the number of erplicates for a power of 0.99
+
+# 2
+
+## a
+Either read data into R or create the dataframe.
+```{r}
+oils <- c("1","2","3")
+trucks <- c("1","2","3","4","5")
+data <- expand.grid(truck=trucks,oil=oils)
+data <- cbind(data,fuel_consumption = c(0.5,
+                                        0.634,
+                                        0.487,
+                                        0.329,
+                                        0.512,
+                                        0.535,
+                                        0.675,
+                                        0.52,
+                                        0.435,
+                                        0.54,
+                                        0.513,
+                                        0.595,
+                                        0.488,
+                                        0.4,
+                                        0.51))
+data
+```
+
+## b
+Build a linear model. Is there any significant difference of means about the oil types?
+Which oil type gies the lowest fuel consumption?
+
+## c
+Is the blocking approach effective?
+
+## d
+Do a complete residual assumption check.
+
+# 3
+Suppose that in in Problem 4-15, the engineer suspects that the workplaces used by the four operators may represent an additional source of variation. Analyze the data from this experiment (use $\alpha=0.05$) and draw conclusions.
+
+## a
+Set up a dataframe with 2 blocking factors (order and operator) and treatment (A,B,C,D)
+```{r}
+orders <- c("1st","2nd","3rd","4th")
+operators <- c("op1","op2","op3","op4")
+data <- expand.grid(operator=operators,order_of_assembly=orders)
+data <- cbind(data,workplace=c("C","B","D","A",
+                               "B","C","A","D",
+                               "A","D","B","C",
+                               "D","A","C","B"
+                               ),
+              observation=c(11,10,14,8,
+                            8,12,10,12,
+                            9,11,7,15,
+                            9,8,18,6
+                            )
+              )
+data %>% kable()
+```
+
+## b
+Use Latin Square to analyze the treatment means.
+
+## c
+Which level combination brings the lowest time?
+
+# 4
+The factors that influence the breaking strength of a syntheti fiber are being studied. Four production machines and three operators are chosen and a factorial experiment is run using fiber from the same production batch. The results follow.
+
+## a
+Either read data into R or create the dataframe.
+```{r}
+machines <- c("1","2","3","4")
+operators <- c("o1","o2","o3")
+data <- expand.grid(machine=rep(machines,2),operator=operators)
+data <- cbind(data,strength = c(109,110,108,110,
+                                110,115,109,108,
+                                110,110,111,114,
+                                112,111,109,112,
+                                116,112,114,120,
+                                114,115,119,117
+                                )
+              )
+data %>% kable()
+```
+
+## b
+Build a linear model. Any interaction between operator and machine?
+
+## c
+Build a reduced model.
+
+## d
+Do a complete 3-part residual assumption check.
+
+# 5
+An experiment is conducted to study the influence of operating temperature and three types of face-plate glass in the light output of an oscilloscope tube. The following data are collected.
+
+## a
+Either read data into R or create the dataframe.
+```{r}
+temperatures <- c(100,125,150)
+glasses <- c("t1","t2","t3")
+data <- expand.grid(temperature=rep(temperatures,3),
+                    glass = glasses)
+data <- cbind(data,output=c(580,1090,1392,
+                            568,1087,1380,
+                            570,1085,1386,
+                            
+                            550,1070,1328,
+                            530,1035,1312,
+                            579,1000,1299,
+                            
+                            546,1045,867,
+                            575,1053,904,
+                            599,1066,889))
+data %>% kable()
+```
+
+## b
+Build a linear model. Any interaction between glass type and temperature?
+
+## c
+Build a reduced model.
+
+## d
+Do a complete 3-part residual assumption check.
+
+# 6
+Sludge is the dried product remaining from processed sewage. 
+It can be used as fertilizer on crops. 
+However, it contains heavy metals. 
+They hypothesized the concentration of certain heavy metals in sludge differ among the metropolitan areas from which the sludge is obtained. 
+The sludge was aded to the sand at 3 different rates: 0.5,1.0,1.5 metric tons/acre.
+The zinc levels were recorded.
+
+## a
+Set up a dataframe named metals. Use factos city (A,B,C), rate (0.5,1.0,1.5), and zinc for the observations.
+```{r}
+cities <- c("A","B","C")
+rates <- c(0.5,1.0,1.5)
+data <- expand.grid(rate=rates,city=cities)
+data <- cbind(data,zinc=c(26.4,25.2,26.0, 30.1,47.7,73.8, 19.4,23.2,18.9,
+                          23.5,39.2,44.6, 31.0,39.1,71.1, 19.3,21.3,19.8,
+                          25.4,25.5,35.5, 30.8,55.3,68.4, 18.7,23.2,19.6,
+                          22.9,31.9,38.6, 32.8,50.7,77.1, 19.0,19.9,21.9
+                          )
+              )
+data %>% kable()
+```
+
+## b
+Build an aov model, using zinc as the response. Which factors are significant? Interaction is significant? Perform an interaction plot.
+
+## c
+List all the factor means and effects. using tapply() or model.table().
+
+## d
+calculate the interaction sum squares from scratch.
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+ lab 5 below
+-->
+
+# 1.
+
+The yield of a chemical process is being studied. The two most important variables are thought ot be th pressure and the temperature. Three levels of each factor are selected and a factorial experiment with two replicates is performed. The yield data follows.
+
+## a
+Set up the dataframe.
+
+```{r}
+temperatures <- c("150","160","170")
+pressures <- c("200","215","230")
+process <- expand.grid(pressure = rep(pressures,2),
+                       temperature = temperatures)
+
+process <- cbind(process,yield=c(90.4,90.7,90.2,
+                                 90.2,90.6,90.4,
+                                 90.1,90.5,89.9,
+                                 90.3,90.6,90.1,
+                                 90.5,90.8,90.4,
+                                 90.7,90.9,90.1))
+process %>% kable()
+```
+
+## b
+Build a linear model using aov(). Are the pressure means significant? Are the temp means significant? Is the interaction significant?
+
+```{r}
+yield_model <- aov(yield ~ temperature * pressure, data=process)
+summary(yield_model)
+```
+The interaction between temperature and pressure is not significant.
+The main effects of temperature and pressure are significant.
+
+```{r}
+yield_model <- aov(yield ~ temperature + pressure, data=process)
+summary(yield_model)
+```
+
+## c
+Create a boxplot of
+
+### yield vs temp
+```{r}
+boxplot(yield~temperature, data=process)
+```
+
+### yield vs pressure
+```{r}
+boxplot(yield~pressure, data=process)
+```
+
+### yield vs temp and pressure
+```{r}
+boxplot(yield~temperature*pressure, data=process)
+```
+
+## d
+Perform a residuals assumption check
+```{r}
+qqnorm(yield_model$residuals)
+qqline(yield_model$residuals)
+```
+The residuals are consistent with a normal distribution centered on zero with constant variance.
+
+# 2
+Johnson an dLeone describe an experiment to investigate warping of copper plates. The two factors studied were the temperature and the copper content of the plates. The response variable was a meaure of the amont of warping. The data were as follows.
+
+## a
+Set up the dataframe 
+
+```{r}
+temperatures <- c("50","75","100","125")
+copper_contents <- c("40","60","80","100")
+copperplate <- expand.grid(copper_content=rep(copper_contents,2),
+                           temperature=temperatures
+                           )
+copperplate <- cbind(copperplate,warping = c(17,16,24,28,
+                                             20,21,22,27,
+                                             12,18,17,12,
+                                             9,13,12,31,
+                                             16,18,25,30,
+                                             12,21,23,23,
+                                             21,23,23,29,
+                                             17,21,22,31))
+copperplate %>% kable()
+```
+
+## b
+build a response model surface (RSM) with warpage as response, use rsm().
+```{r}
+temp_nums <- copperplate$temperature %>% as.numeric()
+cu_nums <- copperplate$copper_content %>% as.numeric()
+response <- copperplate$warping
+copper_model<- rsm(response ~ SO(temp_nums, cu_nums), data=copperplate)
+summary(copper_model)
+
+```
