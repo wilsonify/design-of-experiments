@@ -134,33 +134,60 @@ television %>% kable()
 Is there a difference in conductivity due to coating type? Use $\alpha=0.05$
 
 ```{r}
-
+tv_fit <- lm(conductivity~coating_type,data=television)
+tv_fit_summary <- summary(tv_fit)
+tv_fit_anova <- anova(tv_fit)
 ```
+
+```{r}
+tv_fit_anova$`Pr(>F)`[1]
+```
+
+The observed p-value of 0.0003 is smaller than the rejection criteria of 0.05 so we reject the null hypothesis that there are no differences among the means and conclude that the is at least one group with a different mean.
 
 ## b
 Estimate the overal mean and the treatment effects.
 
+```{r}
+grand_mean <- mean(television$conductivity)
+grand_mean
+tv_fit
 ```
-```
+The overall mean is 137.9375 the effect due to type 2,3, and 4 is 0.25,-12.75,-15.75 respectively.
+
 
 ## c
-Compute a 95% confidence interval estimate of th mean of coating type 4. 
-```
+Compute a 95% confidence interval estimate of the mean of coating type 4. 
+```{r}
+MSError=tv_fit_anova$`Mean Sq`[2]
+LSD.test(aov(conductivity~coating_type,data=television), "coating_type",MSerror = MSError,console = TRUE)
 ```
 
+124.4162 to 134.0838 is a 95% confidence interval for the mean of coating type 4.
+
 Compute a 99% confidence interval estimate of the mean difference between coating types 1 and 4.
+```{r}
+TukeyHSD(aov(conductivity~coating_type,data=television), conf.level=0.99)
 ```
-```
+The difference between type 4 and type 1 is between -27.955 and -3.544 with 99% confidence.
 
 ## d
 Test all pairs of means using the Fisher LSD method with $\alpha=0.05$
-```
-```
+
+See output above
 
 ## e
 Use the graphical method discussed in Section 3-5.3 to compare the means. Which coating type produces the highest conductivity?
-```
+
+```{r}
+scale <- sqrt(MSError/nrow(television))
+curve(dt(x,scale),from=-3,to=3)
 ```
 
+types 2 and 1 are highest with no significant difference between them.
+
 ## f
-Assuming that coating type  is currently in use, what are your recommendations to the manufacturer? We wish to minimize conductivity.
+Assuming that coating type  4 is currently in use, what are your recommendations to the manufacturer? We wish to minimize conductivity.
+
+Continue using type 4 to minimize conductivity.
+Type 3 is not different while types 2 and 1 are higher conductivity.
