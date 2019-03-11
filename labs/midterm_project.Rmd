@@ -16,35 +16,72 @@ library(rsm)
 
 # 1
 The effective life of insulating luids at an accelerated load of 35 kV is being studied.
-Test data have been obtained for four types of fluids. The results were as follows:
+Test fluid_data have been obtained for four types of fluids. The results were as follows:
 
 ## a
-Either read data into R or create the dataframe.
+Either read fluid_data into R or create the fluid_dataframe.
 
 ```{r}
 fluidtypes <- c("1","2","3","4")
-data <- data.frame(fluid = rep(fluidtypes,each=6)
+fluid_data <- data.frame(fluid = rep(fluidtypes,each=6)
                    ,lifetime=c(17.6,18.9,16.3,17.4,20.1,21.6,
                                16.9,15.3,18.6,17.1,19.5,20.3,
                                21.4,23.6,19.4,18.5,20.5,22.3,
                                19.3,21.1,16.9,17.5,18.3,19.8
                                ))
-data %>% kable()
+fluid_data %>% kable()
 ```
 
 ## b
 Build a linear model, using aov. Is there a significant difference among treatment means?
 which fluid gives the longer life?
 
+```{r}
+insulation_life_model <- aov(formula = lifetime ~ fluid,data=fluid_data)
+summary(insulation_life_model)
+```
+Given that there is no difference in lifetime between fluid types, we would expect a result at least this extreme 5.25% of the time. At a confidence level of 95% we fail to reject the null hypothesis and conclude that any difference observed is due to chance.
+
 ## c
 Construct a 95% Confidence Interval for themean life of fluid 2.
+
+```{r}
+anova_of_insulation_life <- anova(insulation_life_model)
+MSError=anova_of_insulation_life$`Mean Sq`[2]
+LSD.test(insulation_life_model, "fluid", MSerror = MSError,console = TRUE)
+```
+
+16.40 to 19.50 is a 95% confidence interval for the mean of fluid type 2.
+
+
 Construct a 99% Confidence Interval for the difference between the lives of Fluids 2 and 3.
 
+```{r}
+TukeyHSD(insulation_life_model, conf.level=0.99)
+```
+The difference between type 4 and type 1 is between -0.7213 and 6.7213 with 99% confidence.
+
 ## d
-Performa complete 3-part residuals check.
+Perform a complete 3-part residuals check.
+
+```{r}
+plot(insulation_life_model)
+```
+
+based on visual analysis, the residuals are close to normally distributed with a mean of zero and a constant variance.
 
 ## e
-Calculate the number of erplicates for a power of 0.99
+Calculate the number of replicates for a power of 0.99
+
+```{r}
+fluid_means <- fluid_data %>% group_by(fluid) %>% summarise(trt_mean = mean(lifetime))
+power.anova.test(groups = 4, 
+                 between.var = var(fluid_means$trt_mean),
+                 within.var = anova_of_insulation_life$`Mean Sq`[2],
+                 power=0.99
+                 )
+```
+17 replicates are needed to achieve a power of 0.99 .
 
 # 2
 
