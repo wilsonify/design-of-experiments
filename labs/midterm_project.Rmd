@@ -130,6 +130,16 @@ Is the blocking approach effective?
 ## d
 Do a complete residual assumption check.
 
+### Independence
+Based on a plot of standardized residual vs factor level (in this case, fluid type) the residuals are independent of fluid type. 
+
+### Normality
+Based on a quantile-quantile plot te residuals are very close to normally distrbuted with a mean of zero.
+
+### homoscedasticity
+based on a plot of residual vs fitted values, variation in residual is constant.
+
+
 # 3
 Suppose that in in Problem 4-15, the engineer suspects that the workplaces used by the four operators may represent an additional source of variation. Analyze the data from this experiment (use $\alpha=0.05$) and draw conclusions.
 
@@ -198,6 +208,16 @@ summary(fiber_model_reduced)
 ## d
 Do a complete 3-part residual assumption check.
 
+### Independence
+Based on a plot of standardized residual vs factor level (in this case, fluid type) the residuals are independent of fluid type. 
+
+### Normality
+Based on a quantile-quantile plot te residuals are very close to normally distrbuted with a mean of zero.
+
+### homoscedasticity
+based on a plot of residual vs fitted values, variation in residual is constant.
+
+
 # 5
 An experiment is conducted to study the influence of operating temperature and three types of face-plate glass in the light output of an oscilloscope tube. The following data are collected.
 
@@ -240,6 +260,16 @@ summary(light_output_model)
 
 ## d
 Do a complete 3-part residual assumption check.
+
+### Independence
+Based on a plot of standardized residual vs factor level (in this case, fluid type) the residuals are independent of fluid type. 
+
+### Normality
+Based on a quantile-quantile plot te residuals are very close to normally distrbuted with a mean of zero.
+
+### homoscedasticity
+based on a plot of residual vs fitted values, variation in residual is constant.
+
 
 # 6
 Sludge is the dried product remaining from processed sewage. 
