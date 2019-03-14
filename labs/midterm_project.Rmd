@@ -15,32 +15,40 @@ library(rsm)
 
 
 # 1
-The effective life of insulating luids at an accelerated load of 35 kV is being studied.
+The effective life of insulating fluids at an accelerated load of 35 kV is being studied.
 Test fluid_data have been obtained for four types of fluids. The results were as follows:
 
 ## a
-Either read fluid_data into R or create the fluid_dataframe.
+Either read data into R or create the dataframe.
 
 ```{r}
 fluidtypes <- c("1","2","3","4")
 fluid_data <- data.frame(fluid = rep(fluidtypes,each=6)
-                   ,lifetime=c(17.6,18.9,16.3,17.4,20.1,21.6,
-                               16.9,15.3,18.6,17.1,19.5,20.3,
-                               21.4,23.6,19.4,18.5,20.5,22.3,
-                               19.3,21.1,16.9,17.5,18.3,19.8
-                               ))
+                         ,lifetime=c(17.6,18.9,16.3,17.4,20.1,21.6,
+                                     16.9,15.3,18.6,17.1,19.5,20.3,
+                                     21.4,23.6,19.4,18.5,20.5,22.3,
+                                     19.3,21.1,16.9,17.5,18.3,19.8
+                                     ))
 fluid_data %>% kable()
 ```
 
 ## b
-Build a linear model, using aov. Is there a significant difference among treatment means?
-which fluid gives the longer life?
+Build a linear model, using aov.
 
 ```{r}
 insulation_life_model <- aov(formula = lifetime ~ fluid,data=fluid_data)
 summary(insulation_life_model)
 ```
+Is there a significant difference among treatment means?
+
 Given that there is no difference in lifetime between fluid types, we would expect a result at least this extreme 5.25% of the time. At a confidence level of 95% we fail to reject the null hypothesis and conclude that any difference observed is due to chance.
+
+which fluid gives the longer life?
+```{r}
+tapply(fluid_data$lifetime, fluid_data$fluid, mean)
+```
+
+Although it is not significant, fluid 3 is associated with the longest life.
 
 ## c
 Construct a 95% Confidence Interval for themean life of fluid 2.
@@ -51,8 +59,7 @@ MSError=anova_of_insulation_life$`Mean Sq`[2]
 LSD.test(insulation_life_model, "fluid", MSerror = MSError,console = TRUE)
 ```
 
-16.40 to 19.50 is a 95% confidence interval for the mean of fluid type 2.
-
+16.4 to 19.5 is a 95% confidence interval for the mean of fluid type 2.
 
 Construct a 99% Confidence Interval for the difference between the lives of Fluids 2 and 3.
 
@@ -64,6 +71,7 @@ The difference between type 4 and type 1 is between -0.7213 and 6.7213 with 99% 
 ## d
 Perform a complete 3-part residuals check.
 ```{r}
+par( mfrow = c(2,2) )
 plot(insulation_life_model)
 ```
 
@@ -73,14 +81,17 @@ Based on a plot of standardized residual vs factor level (in this case, fluid ty
 ### Normality
 Based on a quantile-quantile plot te residuals are very close to normally distrbuted with a mean of zero.
 
-### homoscedasticity
+### Homoscedasticity
 based on a plot of residual vs fitted values, variation in residual is constant.
 
 ## e
 Calculate the number of replicates for a power of 0.99
 
 ```{r}
-fluid_means <- fluid_data %>% group_by(fluid) %>% summarise(trt_mean = mean(lifetime))
+fluid_means <- fluid_data %>% 
+               group_by(fluid) %>% 
+               summarise(trt_mean = mean(lifetime))
+
 power.anova.test(groups = 4, 
                  between.var = var(fluid_means$trt_mean),
                  within.var = anova_of_insulation_life$`Mean Sq`[2],
@@ -97,47 +108,57 @@ Either read data into R or create the dataframe.
 oils <- c("1","2","3")
 trucks <- c("1","2","3","4","5")
 fuel_data <- expand.grid(truck=trucks,oil=oils)
-fuel_data <- cbind(fuel_data,fuel_consumption = c(0.5,
-                                        0.634,
-                                        0.487,
-                                        0.329,
-                                        0.512,
-                                        0.535,
-                                        0.675,
-                                        0.52,
-                                        0.435,
-                                        0.54,
-                                        0.513,
-                                        0.595,
-                                        0.488,
-                                        0.4,
-                                        0.51))
+fuel_data <- cbind(fuel_data,fuel_consumption = c(0.500,0.634,0.487,
+                                                  0.329,0.512,0.535,
+                                                  0.675,0.520,0.435,
+                                                  0.540,0.513,0.595,
+                                                  0.488,0.400,0.510
+                                                  )
+                   )
 fuel_data
 ```
 
 ## b
-Build a linear model. Is there any significant difference of means about the oil types?
-Which oil type gies the lowest fuel consumption?
+Build a linear model. 
 
 ```{r}
 fuel_consumption_model <- aov(formula = fuel_data$fuel_consumption ~ oil+truck,data=fuel_data)
 summary(fuel_consumption_model)
 ```
 
+Is there any significant difference of means about the oil types?
+
+Both truck and oil have significantly different means.
+
+Which oil type gies the lowest fuel consumption?
+
+```{r}
+tapply(fuel_data$fuel_consumption,fuel_data$oil,mean)
+```
+
+Oil type 1 is associated with the lowest fuel consumption.
+
 ## c
 Is the blocking approach effective?
+
+The blocking variable of truck type has a significant effect; therefore, blocking is effective. Without blocking, the effect of oil on fuel consumption could not be decoupled from trucktype.
 
 ## d
 Do a complete residual assumption check.
 
+```{r}
+par( mfrow = c(2,2) )
+plot(fuel_consumption_model)
+```
+
 ### Independence
-Based on a plot of standardized residual vs factor level (in this case, fluid type) the residuals are independent of fluid type. 
+Based on a plot of standardized residual vs factor level (in this case, oil type) the residuals are nearly independent of oil type. 
 
 ### Normality
 Based on a quantile-quantile plot te residuals are very close to normally distrbuted with a mean of zero.
 
-### homoscedasticity
-based on a plot of residual vs fitted values, variation in residual is constant.
+### Homoscedasticity
+based on a plot of residual vs fitted values, variation in residual is not constant. There may be a more complicated relationship between oil, truck, and fuel consumption.
 
 
 # 3
@@ -146,28 +167,50 @@ Suppose that in in Problem 4-15, the engineer suspects that the workplaces used 
 ## a
 Set up a dataframe with 2 blocking factors (order and operator) and treatment (A,B,C,D)
 ```{r}
-orders <- c("1st","2nd","3rd","4th")
-operators <- c("op1","op2","op3","op4")
-workplace_data <- expand.grid(operator=operators,order_of_assembly=orders)
-workplace_data <- cbind(workplace_data,workplace=c("C","B","D","A",
-                               "B","C","A","D",
-                               "A","D","B","C",
-                               "D","A","C","B"
-                               ),
-              observation=c(11,10,14,8,
-                            8,12,10,12,
-                            9,11,7,15,
-                            9,8,18,6
-                            )
-              )
+orders_3 <- c("1st","2nd","3rd","4th")
+operators_3 <- c("op1","op2","op3","op4")
+workplaces <- c("A","B","C","D")
+workplace_data <- expand.grid(operator=operators_3,
+                              order_of_assembly=orders_3
+                              )
+workplace_data <- cbind(workplace_data,
+                        workplace=c("C","B","D","A",
+                                    "B","C","A","D",
+                                    "A","D","B","C",
+                                    "D","A","C","B"
+                                    ),
+                        observation=c(11,10,14,8,
+                                      8,12,10,12,
+                                      9,11,7,15,
+                                      9,8,18,6
+                                      )
+                        )
 workplace_data %>% kable()
 ```
 
 ## b
 Use Latin Square to analyze the treatment means.
+```{r}
+workplace_model <- aov(formula = observation ~ order_of_assembly+operator+workplace ,data=workplace_data)
+summary(workplace_model)
+```
+
+At a confidence level of 95%, there are differences between workplaces.
+
+```{r}
+TukeyHSD( workplace_model, "workplace")
+```
+
+Pairwise, C is different from both B and A. Other pairs of workplaces are not significantly different from each other.
 
 ## c
 Which level combination brings the lowest time?
+
+```{r}
+workplace_model_tables <- model.tables( workplace_model, type = "means" )
+workplace_model_tables$tables$workplace
+```
+Workplace B is associated with the lowest time.
 
 # 4
 The factors that influence the breaking strength of a synthetic fiber are being studied. Four production machines and three operators are chosen and a factorial experiment is run using fiber from the same production batch. The results follow.
@@ -176,16 +219,16 @@ The factors that influence the breaking strength of a synthetic fiber are being 
 Either read data into R or create the dataframe.
 ```{r}
 machines <- c("1","2","3","4")
-operators <- c("o1","o2","o3")
-fiber_data <- expand.grid(machine=rep(machines,2),operator=operators)
+operators_4 <- c("o1","o2","o3")
+fiber_data <- expand.grid(machine=rep(machines,2),operator=operators_4)
 fiber_data <- cbind(fiber_data,strength = c(109,110,108,110,
-                                110,115,109,108,
-                                110,110,111,114,
-                                112,111,109,112,
-                                116,112,114,120,
-                                114,115,119,117
-                                )
-              )
+                                            110,115,109,108,
+                                            110,110,111,114,
+                                            112,111,109,112,
+                                            116,112,114,120,
+                                            114,115,119,117
+                                            )
+                    )
 fiber_data %>% kable()
 ```
 
@@ -193,9 +236,11 @@ fiber_data %>% kable()
 Build a linear model. Any interaction between operator and machine?
 
 ```{r}
-fiber_model <- aov(formula = strength ~ operator+machine ,data=fiber_data)
+fiber_model <- aov(formula = strength ~ operator*machine ,data=fiber_data)
 summary(fiber_model)
 ```
+
+There is no significant interaction between operator and machine. Only operator is significant.
 
 ## c
 Build a reduced model.
@@ -208,13 +253,18 @@ summary(fiber_model_reduced)
 ## d
 Do a complete 3-part residual assumption check.
 
+```{r}
+par( mfrow = c(2,2) )
+plot(fiber_model_reduced)
+```
+
 ### Independence
 Based on a plot of standardized residual vs factor level (in this case, fluid type) the residuals are independent of fluid type. 
 
 ### Normality
 Based on a quantile-quantile plot te residuals are very close to normally distrbuted with a mean of zero.
 
-### homoscedasticity
+### Homoscedasticity
 based on a plot of residual vs fitted values, variation in residual is constant.
 
 
@@ -227,18 +277,18 @@ Either read data into R or create the dataframe.
 temperatures <- c(100,125,150)
 glasses <- c("t1","t2","t3")
 glass_data <- expand.grid(temperature=rep(temperatures,3),
-                    glass = glasses)
+                          glass = glasses)
 glass_data <- cbind(glass_data,output=c(580,1090,1392,
-                            568,1087,1380,
-                            570,1085,1386,
-                            
-                            550,1070,1328,
-                            530,1035,1312,
-                            579,1000,1299,
-                            
-                            546,1045,867,
-                            575,1053,904,
-                            599,1066,889))
+                                        568,1087,1380,
+                                        570,1085,1386,
+                                        550,1070,1328,
+                                        530,1035,1312,
+                                        579,1000,1299,
+                                        546,1045,867,
+                                        575,1053,904,
+                                        599,1066,889
+                                        )
+                    )
 glass_data %>% kable()
 ```
 
@@ -246,29 +296,34 @@ glass_data %>% kable()
 Build a linear model. Any interaction between glass type and temperature?
 
 ```{r}
-light_output_model <- aov(formula = output~temperature+glass,data=glass_data)
+light_output_model <- aov(formula = output~temperature*glass,data=glass_data)
 summary(light_output_model)
 ```
 
+There is a significant interaction between temperature and glass type.
 
 ## c
 Build a reduced model.
-```{r}
-light_output_model <- aov(formula = output~temperature,data=glass_data)
-summary(light_output_model)
-```
+
+Since the interaction is significant, the full interactive model is appropriate.
 
 ## d
 Do a complete 3-part residual assumption check.
 
+```{r}
+par( mfrow = c(2,2) )
+plot(light_output_model)
+```
+
+
 ### Independence
-Based on a plot of standardized residual vs factor level (in this case, fluid type) the residuals are independent of fluid type. 
+Based on a plot of standardized residual vs factor level (in this case, glass type and temperature) the residuals not independent of factor level. 
 
 ### Normality
 Based on a quantile-quantile plot te residuals are very close to normally distrbuted with a mean of zero.
 
-### homoscedasticity
-based on a plot of residual vs fitted values, variation in residual is constant.
+### Homoscedasticity
+based on a plot of residual vs fitted values, variation in residual mostly constant except for a cluster of high residuals at $\hat{y}=800$.
 
 
 # 6
@@ -283,130 +338,83 @@ The zinc levels were recorded.
 Set up a dataframe named metals. Use factos city (A,B,C), rate (0.5,1.0,1.5), and zinc for the observations.
 ```{r}
 cities <- c("A","B","C")
-rates <- c(0.5,1.0,1.5)
+rates <- c("0.5","1.0","1.5")
 zinc_data <- expand.grid(rate=rates,city=cities)
-zinc_data <- cbind(zinc_data,zinc=c(26.4,25.2,26.0, 30.1,47.7,73.8, 19.4,23.2,18.9,
-                          23.5,39.2,44.6, 31.0,39.1,71.1, 19.3,21.3,19.8,
-                          25.4,25.5,35.5, 30.8,55.3,68.4, 18.7,23.2,19.6,
-                          22.9,31.9,38.6, 32.8,50.7,77.1, 19.0,19.9,21.9
-                          )
-              )
+zinc_data <- cbind(zinc_data,zinc=c(26.4,25.2,26.0, 30.1,47.7,73.8,
+                                    19.4,23.2,18.9, 23.5,39.2,44.6,
+                                    31.0,39.1,71.1, 19.3,21.3,19.8,
+                                    25.4,25.5,35.5, 30.8,55.3,68.4,
+                                    18.7,23.2,19.6, 22.9,31.9,38.6,
+                                    32.8,50.7,77.1, 19.0,19.9,21.9
+                                    )
+                   )
 zinc_data %>% kable()
 ```
 
 ## b
-Build an aov model, using zinc as the response. Which factors are significant? Interaction is significant? Perform an interaction plot.
+Build an aov model, using zinc as the response. 
 
 ```{r}
-zinc_model <- aov(formula = zinc ~ rate+city ,data=zinc_data)
+zinc_model <- aov(formula = zinc ~ rate*city ,data=zinc_data)
 summary(zinc_model)
 ```
+
+Which factors are significant? Interaction is significant? 
+
+Rate, City, and the interaction between rate and city are all significant.
+
+Perform an interaction plot.
+```{r}
+interaction.plot(x.factor = zinc_data$rate,
+                 trace.factor = zinc_data$city,
+                 response = zinc_data$zinc)
+```
+Different cities have different response in zinc concentration to increased rate.
 
 ## c
 List all the factor means and effects. using tapply() or model.table().
 
+```{r}
+zinc_model_tables <- model.tables( zinc_model, type = "means" )
+zinc_model_tables$tables$"rate:city"
+```
+
 ## d
 calculate the interaction sum squares from scratch.
 
-
-
-<!-- 
- lab 5 below
--->
-
-# 1.
-
-The yield of a chemical process is being studied. The two most important variables are thought ot be th pressure and the temperature. Three levels of each factor are selected and a factorial experiment with two replicates is performed. The yield data follows.
-
-## a
-Set up the dataframe.
-
 ```{r}
-temperatures <- c("150","160","170")
-pressures <- c("200","215","230")
-process <- expand.grid(pressure = rep(pressures,2),
-                       temperature = temperatures)
+grand_mean <- mean(zinc_data$zinc)
+rate_means <- zinc_data %>% group_by(rate) %>% summarise(rate_mean = mean(zinc))
+city_means <- zinc_data %>% group_by(city) %>% summarise(city_mean = mean(zinc))
+cell_means <- zinc_data %>% group_by(city,rate) %>% summarise(cell_mean = mean(zinc))
 
-process <- cbind(process,yield=c(90.4,90.7,90.2,
-                                 90.2,90.6,90.4,
-                                 90.1,90.5,89.9,
-                                 90.3,90.6,90.1,
-                                 90.5,90.8,90.4,
-                                 90.7,90.9,90.1))
-process %>% kable()
+zinc_data_means <- zinc_data %>%
+  cbind(grand_mean = grand_mean) %>% 
+  merge(rate_means,by="rate") %>%
+  merge(city_means,by="city") %>%
+  merge(cell_means,by=c("rate","city"))
+
+total_df <- nrow(zinc_data) - 1
+rate_df <- nrow(rate_means) - 1
+city_df <- nrow(city_means) - 1
+interaction_df <- rate_df*city_df
+
+total_deviations <- zinc_data_means$zinc - zinc_data_means$grand_mean
+total_sum_of_squares <- sum(total_deviations^2)
+total_mean_square <- total_sum_of_squares / total_df
+
+rate_deviations <- zinc_data_means$zinc - zinc_data_means$rate_mean
+rate_sum_of_squares <- sum(rate_deviations^2)
+rate_mean_square <- rate_sum_of_squares / rate_df
+
+city_deviations <- zinc_data_means$zinc - zinc_data_means$city_mean
+city_sum_of_squares <- sum(city_deviations^2)
+city_mean_square <- city_sum_of_squares / city_df
+
+interaction_deviations <- zinc_data_means$cell_mean - zinc_data_means$city_mean - zinc_data_means$rate_mean + zinc_data_means$grand_mean
+interaction_sum_of_squares <- sum(interaction_deviations^2)
+interaction_mean_square <- interaction_sum_of_squares/interaction_df
+interaction_sum_of_squares
 ```
 
-## b
-Build a linear model using aov(). Are the pressure means significant? Are the temp means significant? Is the interaction significant?
-
-```{r}
-yield_model <- aov(yield ~ temperature * pressure, data=process)
-summary(yield_model)
-```
-The interaction between temperature and pressure is not significant.
-The main effects of temperature and pressure are significant.
-
-```{r}
-yield_model <- aov(yield ~ temperature + pressure, data=process)
-summary(yield_model)
-```
-
-## c
-Create a boxplot of
-
-### yield vs temp
-```{r}
-boxplot(yield~temperature, data=process)
-```
-
-### yield vs pressure
-```{r}
-boxplot(yield~pressure, data=process)
-```
-
-### yield vs temp and pressure
-```{r}
-boxplot(yield~temperature*pressure, data=process)
-```
-
-## d
-Perform a residuals assumption check
-```{r}
-qqnorm(yield_model$residuals)
-qqline(yield_model$residuals)
-```
-The residuals are consistent with a normal distribution centered on zero with constant variance.
-
-# 2
-Johnson an dLeone describe an experiment to investigate warping of copper plates. The two factors studied were the temperature and the copper content of the plates. The response variable was a meaure of the amont of warping. The data were as follows.
-
-## a
-Set up the dataframe 
-
-```{r}
-temperatures <- c("50","75","100","125")
-copper_contents <- c("40","60","80","100")
-copperplate <- expand.grid(copper_content=rep(copper_contents,2),
-                           temperature=temperatures
-                           )
-copperplate <- cbind(copperplate,warping = c(17,16,24,28,
-                                             20,21,22,27,
-                                             12,18,17,12,
-                                             9,13,12,31,
-                                             16,18,25,30,
-                                             12,21,23,23,
-                                             21,23,23,29,
-                                             17,21,22,31))
-copperplate %>% kable()
-```
-
-## b
-build a response model surface (RSM) with warpage as response, use rsm().
-```{r}
-temp_nums <- copperplate$temperature %>% as.numeric()
-cu_nums <- copperplate$copper_content %>% as.numeric()
-response <- copperplate$warping
-copper_model<- rsm(response ~ SO(temp_nums, cu_nums), data=copperplate)
-summary(copper_model)
-
-```
+the interaction sum of squares is 1809.398 which is consistent with the summary output in part b.
