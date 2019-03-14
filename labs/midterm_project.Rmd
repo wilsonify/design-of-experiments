@@ -63,12 +63,18 @@ The difference between type 4 and type 1 is between -0.7213 and 6.7213 with 99% 
 
 ## d
 Perform a complete 3-part residuals check.
-
 ```{r}
 plot(insulation_life_model)
 ```
 
-based on visual analysis, the residuals are close to normally distributed with a mean of zero and a constant variance.
+### Independence
+Based on a plot of standardized residual vs factor level (in this case, fluid type) the residuals are independent of fluid type. 
+
+### Normality
+Based on a quantile-quantile plot te residuals are very close to normally distrbuted with a mean of zero.
+
+### homoscedasticity
+based on a plot of residual vs fitted values, variation in residual is constant.
 
 ## e
 Calculate the number of replicates for a power of 0.99
@@ -90,8 +96,8 @@ Either read data into R or create the dataframe.
 ```{r}
 oils <- c("1","2","3")
 trucks <- c("1","2","3","4","5")
-data <- expand.grid(truck=trucks,oil=oils)
-data <- cbind(data,fuel_consumption = c(0.5,
+fuel_data <- expand.grid(truck=trucks,oil=oils)
+fuel_data <- cbind(fuel_data,fuel_consumption = c(0.5,
                                         0.634,
                                         0.487,
                                         0.329,
@@ -106,12 +112,17 @@ data <- cbind(data,fuel_consumption = c(0.5,
                                         0.488,
                                         0.4,
                                         0.51))
-data
+fuel_data
 ```
 
 ## b
 Build a linear model. Is there any significant difference of means about the oil types?
 Which oil type gies the lowest fuel consumption?
+
+```{r}
+fuel_consumption_model <- aov(formula = fuel_data$fuel_consumption ~ oil+truck,data=fuel_data)
+summary(fuel_consumption_model)
+```
 
 ## c
 Is the blocking approach effective?
@@ -127,8 +138,8 @@ Set up a dataframe with 2 blocking factors (order and operator) and treatment (A
 ```{r}
 orders <- c("1st","2nd","3rd","4th")
 operators <- c("op1","op2","op3","op4")
-data <- expand.grid(operator=operators,order_of_assembly=orders)
-data <- cbind(data,workplace=c("C","B","D","A",
+workplace_data <- expand.grid(operator=operators,order_of_assembly=orders)
+workplace_data <- cbind(workplace_data,workplace=c("C","B","D","A",
                                "B","C","A","D",
                                "A","D","B","C",
                                "D","A","C","B"
@@ -139,7 +150,7 @@ data <- cbind(data,workplace=c("C","B","D","A",
                             9,8,18,6
                             )
               )
-data %>% kable()
+workplace_data %>% kable()
 ```
 
 ## b
@@ -149,15 +160,15 @@ Use Latin Square to analyze the treatment means.
 Which level combination brings the lowest time?
 
 # 4
-The factors that influence the breaking strength of a syntheti fiber are being studied. Four production machines and three operators are chosen and a factorial experiment is run using fiber from the same production batch. The results follow.
+The factors that influence the breaking strength of a synthetic fiber are being studied. Four production machines and three operators are chosen and a factorial experiment is run using fiber from the same production batch. The results follow.
 
 ## a
 Either read data into R or create the dataframe.
 ```{r}
 machines <- c("1","2","3","4")
 operators <- c("o1","o2","o3")
-data <- expand.grid(machine=rep(machines,2),operator=operators)
-data <- cbind(data,strength = c(109,110,108,110,
+fiber_data <- expand.grid(machine=rep(machines,2),operator=operators)
+fiber_data <- cbind(fiber_data,strength = c(109,110,108,110,
                                 110,115,109,108,
                                 110,110,111,114,
                                 112,111,109,112,
@@ -165,14 +176,24 @@ data <- cbind(data,strength = c(109,110,108,110,
                                 114,115,119,117
                                 )
               )
-data %>% kable()
+fiber_data %>% kable()
 ```
 
 ## b
 Build a linear model. Any interaction between operator and machine?
 
+```{r}
+fiber_model <- aov(formula = strength ~ operator+machine ,data=fiber_data)
+summary(fiber_model)
+```
+
 ## c
 Build a reduced model.
+
+```{r}
+fiber_model_reduced <- aov(formula = strength ~ operator ,data=fiber_data)
+summary(fiber_model_reduced)
+```
 
 ## d
 Do a complete 3-part residual assumption check.
@@ -185,9 +206,9 @@ Either read data into R or create the dataframe.
 ```{r}
 temperatures <- c(100,125,150)
 glasses <- c("t1","t2","t3")
-data <- expand.grid(temperature=rep(temperatures,3),
+glass_data <- expand.grid(temperature=rep(temperatures,3),
                     glass = glasses)
-data <- cbind(data,output=c(580,1090,1392,
+glass_data <- cbind(glass_data,output=c(580,1090,1392,
                             568,1087,1380,
                             570,1085,1386,
                             
@@ -198,14 +219,24 @@ data <- cbind(data,output=c(580,1090,1392,
                             546,1045,867,
                             575,1053,904,
                             599,1066,889))
-data %>% kable()
+glass_data %>% kable()
 ```
 
 ## b
 Build a linear model. Any interaction between glass type and temperature?
 
+```{r}
+light_output_model <- aov(formula = output~temperature+glass,data=glass_data)
+summary(light_output_model)
+```
+
+
 ## c
 Build a reduced model.
+```{r}
+light_output_model <- aov(formula = output~temperature,data=glass_data)
+summary(light_output_model)
+```
 
 ## d
 Do a complete 3-part residual assumption check.
@@ -223,33 +254,29 @@ Set up a dataframe named metals. Use factos city (A,B,C), rate (0.5,1.0,1.5), an
 ```{r}
 cities <- c("A","B","C")
 rates <- c(0.5,1.0,1.5)
-data <- expand.grid(rate=rates,city=cities)
-data <- cbind(data,zinc=c(26.4,25.2,26.0, 30.1,47.7,73.8, 19.4,23.2,18.9,
+zinc_data <- expand.grid(rate=rates,city=cities)
+zinc_data <- cbind(zinc_data,zinc=c(26.4,25.2,26.0, 30.1,47.7,73.8, 19.4,23.2,18.9,
                           23.5,39.2,44.6, 31.0,39.1,71.1, 19.3,21.3,19.8,
                           25.4,25.5,35.5, 30.8,55.3,68.4, 18.7,23.2,19.6,
                           22.9,31.9,38.6, 32.8,50.7,77.1, 19.0,19.9,21.9
                           )
               )
-data %>% kable()
+zinc_data %>% kable()
 ```
 
 ## b
 Build an aov model, using zinc as the response. Which factors are significant? Interaction is significant? Perform an interaction plot.
+
+```{r}
+zinc_model <- aov(formula = zinc ~ rate+city ,data=zinc_data)
+summary(zinc_model)
+```
 
 ## c
 List all the factor means and effects. using tapply() or model.table().
 
 ## d
 calculate the interaction sum squares from scratch.
-
-
-
-
-
-
-
-
-
 
 
 
