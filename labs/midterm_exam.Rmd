@@ -163,7 +163,7 @@ shape_data <- cbind(shape_data, shape_factor=c(0.78,0.80,0.81,0.75,0.77,0.78,
                                                0.97,0.86,0.78,0.76,0.76,0.75
                                                )
                     )
-shape_data #%>% kable()
+shape_data %>% kable()
 ```
 
 ## a
