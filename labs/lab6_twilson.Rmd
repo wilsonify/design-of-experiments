@@ -22,20 +22,42 @@ speeds <- c("40","90")
 treatments <- expand.grid(bit_size=rep(bit_sizes,4),speed=speeds)
 treatments
 circuit_data <- data.frame(treatments,
-                           vibration =c(18.2,18.9,12.9,14.4,
-                                        27.2,24.0,22.4,22.5,
-                                        15.9,14.5,14.1,14.2,
-                                        41.0,43.9,36.3,39.9
+                           vibration =c(18.2,27.2,
+                                        18.9,24.0,
+                                        12.9,22.4,
+                                        14.4,22.5,
+                                        15.9,41.0,
+                                        14.5,43.9,
+                                        15.1,36.3,
+                                        14.2,39.9
                                         )
                            )
 circuit_data %>% kable()
 ```
 
 ## a
+analyze the data from this experiment.
+
+```{r}
+vibration_model <- aov(formula = vibration~bit_size*speed, data=circuit_data)
+summary(vibration_model)
+```
 
 ## b
+construct a normal probability plot of the residuals, and plot the residuals versus the predicted vibration level. Interpret these plots.
+
+```{r}
+par( mfrow = c(2,2) )
+plot(vibration_model)
+```
 
 ## c
+Draw the AB interaction plot. What levels of bit size and speed would you recommend for routine operation?
+```{r}
+interaction.plot(x.factor = circuit_data$bit_size,
+                 trace.factor = circuit_data$speed,
+                 response = circuit_data$vibration)
+```
 
 # 2
 
@@ -46,299 +68,80 @@ cutting_angles <- c("-","+")
 machine_trts <- expand.grid(cutting_speed=rep(cutting_speeds,3),
                             tool_geometry=tool_geometries,
                             cutting_angle=cutting_angles)
-
+machine_trts
 machine_data <- data.frame(machine_trts,
-                           lifetime = c(22,31,25,
-                                        32,43,29,
-                                        35,34,50,
-                                        55,47,46,
-                                        44,45,38,
-                                        40,37,36,
-                                        60,50,54,
-                                        39,41,47
+                           lifetime = c(22,32,
+                                        31,42,
+                                        25,29,
+                                        35,55,
+                                        34,47,
+                                        50,46,
+                                        44,40,
+                                        45,37,
+                                        38,36,
+                                        60,39,
+                                        50,41,
+                                        54,47
                                         )
                            )
 machine_data %>% kable()
 ```
 
 ## a
-
-## b
-
-## c
-
-## d
-
-## e
-
-# 3
-
-## a
-
-## b
-
-## c
-
-## d
-
-## e
-
-
-<!--
-# 1
-Three brands of batteries are under study. It is suspected that the lives (in weeks) of the three brands are different. Five batteries of each brand are tested with the following results.
+Estimate the factor effects. Which effect appears to be large?
 
 ```{r}
-brands <- c("b1","b2","b3")
-battery_data <- data.frame(brand=rep(brands,5),
-                   weeks_of_life=c(100,76,108,
-                                   96,80,100,
-                                   92,75,96,
-                                   96,84,98,
-                                   92,82,100))
-battery_data %>% kable()
-```
-
-## a
-build a linear model, using aov. Are the lives of these brands of batteries different?
-which brand gives the longest life?
-
-```{r}
-battery_model <- aov(formula = weeks_of_life ~ brand,data=battery_data)
-summary(battery_model)
-```
-
-```{r}
-brand_means <- tapply(battery_data$weeks_of_life,battery_data$brand,mean)
-brand_means
+lifetime_model <- aov(lifetime~cutting_speed*tool_geometry*cutting_angle,data=machine_data)
+lifetime_model$coefficients
 ```
 
 ## b
-Perform a boxplot and a stripchart.
+Use the analysis of variance to confirm your conclusions for part a.
 ```{r}
-boxplot(battery_data$weeks_of_life~battery_data$brand)
+anova(lifetime_model)
 ```
 
-```{r}
-stripchart(battery_data$weeks_of_life~battery_data$brand,vertical = TRUE)
-lines(brand_means)
-```
 
 ## c
-construct a 95% CI for the mean life of brand 2. Using Fisher LSD.
-Construct a 99% CI for the mean difference between the lives of brand 2 and 3, using Tukey HSD.
+Write down a regression model for predicting tool life (in hours) based on the results of this experiment.
 
 ```{r}
-battery_model_anova <- anova(battery_model)
-MSError=battery_model_anova$`Mean Sq`[2]
-LSD.test(battery_model, "brand", MSerror = MSError,console = TRUE)
-```
-
-```{r}
-TukeyHSD(battery_model, conf.level=0.99)
+reduced_lifetime_model <- lm(lifetime~tool_geometry*cutting_angle+cutting_speed:cutting_angle,data=machine_data)
+summary(reduced_lifetime_model)
 ```
 
 ## d
-perform the 3part residual check.
-
+Analyze the residuals. Are there any obvious problems?
 ```{r}
 par( mfrow = c(2,2) )
-plot(battery_model)
+plot(reduced_lifetime_model)
 ```
 
 ## e
-calculate the number of replicates for a power of 0.9
+based on an analysis of main effect and interaction plots, what levels of A, B, and C would you recommend using?
 
 ```{r}
-brand_means <- battery_data %>% 
-               group_by(brand) %>% 
-               summarise(trt_mean = mean(weeks_of_life))
 
-power.anova.test(groups = nrow(brand_means), 
-                 between.var = var(brand_means$trt_mean),
-                 within.var = battery_model_anova$`Mean Sq`[2],
-                 power=0.9
-                 )
 ```
-3 replicates are needed for a power of 0.9
-
-# 2
-A manufacturer of television sets is interested in the effect of tube conductivity of four different types of coating for color picture tubes. The following conductivity data are obtained.
-
-```{r}
-coatings <- c("c1","c2","c3","c4")
-conductivity_data<- data.frame(coating = rep(coatings,each=4),
-                   conductivity = c(143,141,150,146,
-                                    152,149,137,143,
-                                    134,136,132,127,
-                                    129,127,132,129))
-conductivity_data%>% kable()
-```
-
-## a
-Is there a difference in conductivity due to coating type?
-
-```{r}
-conductivity_model <- aov(formula = conductivity~coating,data=conductivity_data)
-summary(conductivity_model)
-```
-
-## b
-Estimate the overall mean and the treatment effects.
-
-```{r}
-grand_mean <- mean(conductivity_data$conductivity)
-grand_mean
-```
-```{r}
-trt_means <- tapply(conductivity_data$conductivity,conductivity_data$coating,mean)
-trt_means
-```
-
-## c
-Compute a 95% CI of the mean of coating type 4.
-```{r}
-conductivity_model_anova <- anova(conductivity_model)
-MSError=conductivity_model_anova$`Mean Sq`[2]
-LSD.test(conductivity_model, "coating", MSerror = MSError,console = TRUE)
-```
-124.4162 to 134.0838 is a 95% CI for coating 4.
-
-Compute a 99% CI for the difference between types 1 and 4.
-```{r}
-TukeyHSD(conductivity_model, conf.level=0.99)
-```
--27.9555 to -3.5445 is a 99% CI for the difference between coating 1 and 4.
-
-## d
-Test all pairs of means using fisher lsd.
-```{r}
-pairwise.t.test(conductivity_data$conductivity,conductivity_data$coating, p.adj = "bonf")
-```
-
-1 and 2 are different from 3 and 4
-
 
 # 3
-An article in the fire safety journal describes an experiment in which a shape factor was determined for several different nozzle designs at six levels of jet effulx velocity. Interest focused on potential differences between nozzle designs, with velocity considered as a nuisance variable. The data are shown below.
-
-```{r}
-nozzles <- c("n1","n2","n3","n4","n5")
-jet_efflux_velocities <- c(11.73,14.37,16.59,20.43,23.46,28.74)
-shape_data <- expand.grid(jet_efflux_velocity = jet_efflux_velocities,nozzle=nozzles)
-shape_data <- cbind(shape_data, shape_factor=c(0.78,0.80,0.81,0.75,0.77,0.78,
-                                               0.85,0.85,0.92,0.86,0.81,0.83,
-                                               0.93,0.92,0.95,0.89,0.89,0.83,
-                                               1.14,0.97,0.98,0.88,0.86,0.83,
-                                               0.97,0.86,0.78,0.76,0.76,0.75
-                                               )
-                    )
-shape_data %>% kable()
-```
+An experiment was performed to improve the yield of a chemical process. Four factors were selectd, and two replicates of a completely randomized experiment were run. The results are shown in the following table.
 
 ## a
-build a linear model nozzle as a blocking factor. Does the nozzle design affect the shape factor?
-
-```{r}
-shape_model <- aov(formula = shape_factor~nozzle+jet_efflux_velocity,data=shape_data)
-summary(shape_model)
-```
-Nozzel design has a significant effect on shape factor.
+Estimate the factor effects.
 
 ## b
-which nozzle design are different with respect to the shape factor?
-
-```{r}
-TukeyHSD(shape_model, conf.level=0.95)
-```
-
-In order of significance, these pairs are different:
-
-n4-n1 =  0.16166667 pvalue = 0.0001409
-n5-n4 = -0.13000000 pvalue = 0.0019336
-n3-n1 =  0.12000000 pvalue = 0.0043762
-n4-n2 =  0.09000000 pvalue = 0.0446210
+Prepare an analysis of variance table and determine which factors are important in explaining yield.
 
 ## c
-Is the velocity effect significant?
-At a pvalue of 0.0001 velocity has a significant effect on shape factor.
+Write down a regression model for predicting yield, assuming that all four factors were varied over the range from -1 to +1.
 
 ## d
-Check if nozzle is an effective blocking factor.
-At a pvalue of 9.79e-05 nozzle has a significant effect on shape factor, therefore the blocked design is effective.
+Plot the residuals versus the predicted yield and on a normal probability scale. Does the residual analysis appear satisfactory?
 
+## e
 
-# 4
-Johnson and Leone describe an experiment to investigate warping of copper plates. The two factors studied were the temperature and the copper content of the plates. The response variable was a measure of the amount of warping. The data were as follows.
+Two three-factor interactions, ABC and ABD, apparently have large effects. Draw a cube plot in th factors A, B, and C with the average yields shown at each corner.
+Repeat using the factors A, B, and D. Do these two plots aid in a data interpretation?
+Where would you recommend that the process be run with respect to the four variables?
 
-```{r}
-temperatures <- c("50","75","100","125")
-cu_contents <- c("40","60","80","100")
-warp_data <- expand.grid(cu_content=rep(cu_contents,2),temperature=temperatures)
-warp_data <- cbind(warp_data,warping=c(17,16,24,28,
-                                       20,21,22,27,
-                                       12,18,17,27,
-                                       09,13,12,31,
-                                       16,18,25,30,
-                                       12,21,23,23,
-                                       21,23,23,29,
-                                       17,21,22,31
-                                       )
-                   )
-warp_data %>% kable()
-```
-## a
-is there any indication that either factor affects the amount of warping?
-
-```{r}
-warp_model <- aov(formula = warping~cu_content+temperature,data=warp_data)
-summary(warp_model)
-```
-
-## b
-Do a box plot of warp vs temp and content together.
-which level combination gives the lowest warpage?
-
-```{r}
-ggplot(data = warp_data, 
-       aes(x=temperature, 
-           y=warping, 
-           color=cu_content
-           )
-       ) + geom_boxplot()
-```
-
-temperature = 75 and Cu content = 40 is associated with the lowest warpage.
-
-
-## c
-Suppose that temperature cannot be controlled in where the copper plate are used. Any conclusion about the content? (i.e. any difference among means?)
-```{r}
-ggplot(data = warp_data, 
-       aes(x=cu_content, 
-           y=warping, 
-           )
-       ) + geom_boxplot()
-```
-If temperature cannot be controlled, Cu content of 60 has less variation in warpage than 40 or 80 while maintaining significantly less warpage than 100.
-
-
-## d
-perform a 3-part residual check.
-```{r}
-par( mfrow = c(2,2) )
-plot(warp_model)
-```
-
-### Independence
-Based on a plot of standardized residual vs factor level (in this case, temperature and cu content) the residuals are nearly independent of cu content or temperature. 
-
-### Normality
-Based on a quantile-quantile plot te residuals are very close to normally distrbuted with a mean of zero.
-
-### Homoscedasticity
-based on a plot of residual vs fitted values, variation in residual nearly constant.
-
-We can be confident in making statistical inferences about the coefficients of this model.
-
--->
