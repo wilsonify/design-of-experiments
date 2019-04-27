@@ -102,7 +102,7 @@ Complete the following table to test the $H_0 : \mu_1 = \mu_2 = \mu_3 = \mu_4$
 Reject ____________ Not reject ______________
 
 ## (b)
-Difference between 2 means: $\y_1 - \y_2$
+Difference between 2 means: $y_1 - y_2$
 
 Compute the standard error :_____________
 

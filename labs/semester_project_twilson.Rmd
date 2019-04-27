@@ -15,7 +15,7 @@ library(agricolae)
 
 
 # 1
-An article in the AT&T Technical Journal (March/April 1986, Vol. 65, pp. 39-50) describes the application of two-level factorial designs to integrated circuit manufacturing. A basic processing step is to grow an epitaxial layer on polished silicon wafers. The wafers mounted on a susceptor are positioned inside a bell jar, and chemical vapors are introduced. The susceptor is rotated and heat is applied until the epitaxial layer is thick enough. An experiment was run using two factors: arsenic flow rate (A) and deposition time (B). Four replicates were run, and the epitaxial layer thickness was measured (in $\mu m$). The data are shown below:
+An article in the AT&T Technical Journal (March/April 1986, Vol. 65, pp. 39-50) describes the application of two-level factorial designs to integrated circuit manufacturing. A basic processing step is to grow an epitaxial layer on polished silicon wafers. The wafers mounted on a susceptor are positioned inside a bell jar, and chemical vapors are introduced. The susceptor is rotated and heat is applied until the epitaxial layer is thick enough. An experiment was run using two factors: arsenic flow rate (A) and deposition time (B). Four replicates were run, and the epitaxial layer thickness was measured in  um. The data are shown below:
 
 Replicate Factor Levels
 
@@ -55,7 +55,7 @@ Perform a canonical analysis. Do a contour plot. Any optimal response?
 
 
 # 2
-A nickel-titanium alloy is used to make components for jet turbine aircraft engines. Cracking is a potentially serious problem in the final part, because it can lead to nonrecoverable failure. A test is run at the parts producer to determine the effect of four factors on cracks. The four factors are pouring temperature (A), titanium content (B), heat treatment method (C), and amount of grain refiner used (D). Two replicates of a $2^4$ design are run, and the length of crack (in mm $\times10^{-2}$?) induced in a sample coupon subjected to a standard test is measured. The data are shown in the following table:
+A nickel-titanium alloy is used to make components for jet turbine aircraft engines. Cracking is a potentially serious problem in the final part, because it can lead to nonrecoverable failure. A test is run at the parts producer to determine the effect of four factors on cracks. The four factors are pouring temperature (A), titanium content (B), heat treatment method (C), and amount of grain refiner used (D). Two replicates of a  2^4  design are run, and the length of crack in mm  $\times 10^{-2}$  ? induced in a sample coupon subjected to a standard test is measured. The data are shown in the following table:
 
 
 7.037
@@ -102,12 +102,12 @@ Estimate the factor effects, Which factor effects appear to be large?
 Change the factors name (“Temp”, “Content”, “Method”, “Refiner”, “Length”). 
 
 ## b
-Conduct an analysis of variance. Do any of the factors affect cracking? Use $\alpha = 0.05$.
+Conduct an analysis of variance. Do any of the factors affect cracking? Use  $\alpha = 0.05$ .
 Perform effects Daniel plot and Lenth plot.
 
 
 ## c
-Write down a regression model that can be used to predict crack length as a function.\nof the significant main effects and interactions you have identified in part (b). Build a  RSM model (2nd order, 1st order with interaction). Choose one which works. 
+Write down a regression model that can be used to predict crack length as a function of the significant main effects and interactions you have identified in part (b). Build a  RSM model (2nd order, 1st order with interaction). Choose one which works. 
 
 
 ## d
@@ -130,11 +130,11 @@ between 55 and 60.
 Conversion
 Time ‘Temperature %, Activity
 Run (min) co v1 Ye
-1 1.000 =1.000 74.00 33.20
-2 1,000 =1.000 51.00 62.90
-3 1.000 1.000 88.00 $3.40
+1 1.000 -1.000 74.00 33.20
+2 1,000 -1.000 51.00 62.90
+3 1.000 1.000 88.00 3.40
 4 1.000 1.000 70.00 62.60
-5 =1.000 1.000 71.00 57.30
+5 -1.000 1.000 71.00 57.30
 6 1.000 1.000 90.00 67.90
 7 1.000 1.000 66.00 59.80
 8 1.000 1.000 97.00 67.80
@@ -142,11 +142,11 @@ Run (min) co v1 Ye
 10 0.000 0.000 75.00 60.40
 u 0.000 0.000 76.00 59.10
 2 0.000 0.000 3.00 60.60
-13 =1.682 0.000 16.00 59.10
+13 -1.682 0.000 16.00 59.10
 4 1.682 0.000 79.00 65.90
 18 0.000 1.682 85.00 60.00
 16 0.000 1.682 97.00 60.70
-"7 0.000 0.000 35.00 $7.40
+7 0.000 0.000 35.00 7.40
 18 0,000 0.000 81.00 63.20
 19 0,000 0.000 80.00 60.80
 20 0.000 0.000 91.00 38.90
@@ -167,7 +167,7 @@ Perform a residual analysis. Take out any outlyers.
 Perform a canonical analysis. Any optimal response. Do a contour plot of Time-Temperature, Time-Catalyst, Temp-Catalyst.
 
 # 4
-The following data were collected by a chemical engineer. The response y is filtration time, $x_1$; is temperature, and $x_3$; is pressure. Fit a second-order model.
+The following data were collected by a chemical engineer. The response y is filtration time,  x_1 ; is temperature, and  x_3 ; is pressure. Fit a second-order model.
 
 ```{r}
 data.frame(x1=c(-1,-1,1,1,-1.414,1.414,0,0,0,0,0,0,0),
