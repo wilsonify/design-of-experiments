@@ -1,0 +1,115 @@
+---
+title: "Stat 5309 Semester Project"
+author: "Tom Wilson"
+date: "May 10th, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(knitr)
+library(agricolae)
+```
+
+
+
+# 1
+An article in the AT&T Technical Journal (March/April 1986, Vol. 65, pp. 39-50) describes the application of two-level factorial designs to integrated circuit manufacturing. A basic processing step is to grow an epitaxial layer on polished silicon wafers. The wafers mounted on a susceptor are positioned inside a bell jar, and chemical vapors are introduced. The susceptor is rotated and heat is applied until the epitaxial layer is thick enough. An experiment was run using two factors: arsenic flow rate (A) and deposition time (B). Four replicates were run, and the epitaxial layer thickness was measured (in $\mu m$). The data are shown below:
+
+Replicate Factor Levels
+
+A 55%, 59%
+B 10 min, 15 min
+
+A B I     , II    , III   , IV
+- - 14.037, 16.165, 13.972, 13.907 
++ - 13.880, 13.860, 14.032, 13.914
+- + 14.821, 14.757, 14.843, 14.878 
++ + 14.888, 14.921, 14.415, 14.932
+
+
+
+
+## a
+Estimate the factor effects.
+
+## b
+Conduct an analysis of variance. Which factors are important?
+
+## c
+Write down a regression equation that could be used to predict epitaxial layer thickness over the region of arsenic flow rate and deposition time used in this experiment.
+
+Build a RSM  model (2nd order, 1st order with interaction). Choose one which works. (c2) Perform Daniel plot and Lenth plot.  What is the model ‘s R-square. 
+
+## d
+Analyze the residuals. Are there any residuals that should cause concern?
+
+Find the cook distance. Take out the outlier(s). Rebuilt the rsm model on new data.
+
+## e
+Discuss how you might deal with the potential outlier found in part (d).
+
+## f
+Perform a canonical analysis. Do a contour plot. Any optimal response?
+
+
+# 2
+A nickel-titanium alloy is used to make components for jet turbine aircraft engines. Cracking is a potentially serious problem in the final part, because it can lead to nonrecoverable failure. A test is run at the parts producer to determine the effect of four factors on cracks. The four factors are pouring temperature (A), titanium content (B), heat treatment method (C), and amount of grain refiner used (D). Two replicates of a $2^4$ design are run, and the length of crack (in mm $\times10^{-2}$?) induced in a sample coupon subjected to a standard test is measured. The data are shown in the following table:
+
+
+7.037
+14.707
+11.635
+17.273
+10.403
+4.368
+9.360
+14.440
+8.561
+16.867
+13.876
+19.824
+11.846
+6.125
+11.190
+15.653
+
+6.376
+15.219
+12.089
+17.815
+10.151
+4.098
+9.253
+12.923
+8.951
+17.052
+13.658
+19.639
+12.337
+5.904
+10.935
+15.053
+
+Estimate the factor effects, Which factor effects appear to be large?\n\n() Conduct an analysis of variance. Do any of the factors affect cracking? Use a =\n0.05.\n\n(©) Write down a regression model that can be used to predict crack length as a function.\nof the significant main effects and interactions you have identified in part (b).\n\n(4) Analyze the residuals from this experiment.\n\n(e) Is there an indication that any of the factors affect the variability in cracking?\n\n(f) What recommendations would you make regarding process operations? Use inter-\naction and/or main effect plots to assist in drawing conclusions.'
+
+## a
+## b
+## c
+## d
+## e
+## f
+
+
+# 3
+## a
+## b
+## c
+## d
+## e
+
+# 4
+## a
+## b
+

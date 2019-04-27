@@ -1,0 +1,143 @@
+---
+title: "Stat 5309 Final Exam"
+author: "Tom Wilson"
+date: "May 7th, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(knitr)
+library(agricolae)
+```
+
+
+
+# Problem 1:
+The effect of 4 types of graphite coater types on light box reading are to be studied. The readings might differ from day to day. Here assume we have a fixed effect model. Observations are taken for 3 days on the four types. The results are
+
+
+## (a)
+Write the model equation _________________________
+State all the assumptions about residuals:  _________________________
+Note: Day is used as blocking factor.
+
+## (b)
+Use definitions to estimate the model parameters ( 14 parameters), where : treatment effects and block effects
+
+## (c)
+Test the hypothesis that the effects ( ie, mean effect) of the 4 graphite coater types are the same.
+Hypothesis:  Ho________________Ha__________
+
+Test statistic______________
+
+P-values _________________
+
+Conclusion_________________
+
+## (d)
+How would your analysis of variance be different if the experiment had not been blocked?
+Write the ANOVA table with the value of the test statistic and p-value.
+
+
+# Problem 2:
+The response time in milliseconds was determined for 3 different types of circuits that could be used in an automatic valve shutoff mechanism. The results from a completely randomized experiment are shown in the following table:
+
+
+## (a)
+Write the model equation:_________________________________
+State all the assumptions about residuals:  _________________________
+
+## (b)
+Use definitions and R to find the estimates for the following parameters:
+: treatment effects
+
+## (c)
+Perform a Hypothesis Testing that the hypothesis to be tested for response time being equal for different circuit types.
+Hypothesis.:  Ho__________________ Ha_______________
+
+Test statistics _______________
+
+P-value____________________
+
+Decision: __________________ Use 
+
+## (d)
+Identify the pairs of treatment means which are different using Tukey’s tests with Significant level.
+
+
+## (e)
+Suppose we want to test for the significant difference of
+
+$\frac{\mu_1 + \mu_3}{2} = \mu_2$
+
+Perform the appropriate test for the contrast.
+
+Write Contrast  C: ____________________
+
+Find the estimate :  c =_____________se(c ) =__________________
+
+Hypothesis :  Ho__________________; Ha________________
+
+Test statistics_____________________; P-value______________
+
+Conclustion:______________________
+
+# Problem 3
+A study is conducted to compare 4 menus in terms of numbers of calories.
+The 4 menus are:
+ A- No calories
+ B- Calories
+ C-Rank-ordered Calories
+ D-Color-ordered Calories
+
+Suppose n=20  per each menu.  The sample means and estimated variance are
+
+$y_1 = 17.6$ $y_2=16.8$ $y_3=16$ $y_4=14.4$ $y_..=16.2$ $s^2 = MSE = 196 $
+
+## (a)
+Complete the following table to test the $H_0 : \mu_1 = \mu_2 = \mu_3 = \mu_4$
+
+Reject ____________ Not reject ______________
+
+## (b)
+Difference between 2 means: $\y_1 - \y_2$
+
+Compute the standard error :_____________
+
+Compute the Fisher LSD_____________
+
+
+Write a 95%-CI for the difference, using Fisher LSD____________________
+
+## (c)
+Contrast  C:
+Write the contrast C which compares Menu 1 vs Menus {1,2,3} combined. ___________________________________
+                
+Calulate an estimate of C :  c=_________________
+  
+
+Calculate the standard error of the contrast: se(c ) =______________
+
+
+Write a 95%-CI for  C, using t-distribution :___________________
+
+# Problem 4
+
+A router is useed to cut locating notches on a printed circuit board. The vibration level at the surface of the board as it is cut is considered to be a major source of dimensional variation in the notches. Two factors are thought to influence vibration: bit size (A) and cutting speed (B). Two sizes (1/16 and 1/8 inch) two speeds (40 and 90 rpm ) are selected and four boards are cut at each set of conditions shown below. The response variable is vibration measuerd as the resultant vecor of three accelerometers (x,y,z) on each test circuit board.
+
+## (a)
+Caculate, from scratch, effects of A, B, AB[ Hint: Chapter 6]
+
+## (b)
+Calculate the Sum Squares: SS(A), SS(B), SS(AB).
+
+## (c)
+Complete the ANOVA table: df, MS, F-stat, P-values of A, B, AB
+
+## (d)
+Use R,  find the model matrix X.
+
+Use X to calculate the vector of  coefficients   ,  for the regression model.
+
