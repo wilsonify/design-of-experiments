@@ -11,6 +11,17 @@ library(dplyr)
 library(knitr)
 library(agricolae)
 library(rsm)
+library(daewr)
+library(gmodels)
+library(MASS)
+library(lsmeans)
+library(BsMD)
+library(lme4)
+library(FrF2)
+library(DoE.base)
+library(AlgDesign)
+library(leaps)
+library(GAD)
 ```
 
 
@@ -19,8 +30,8 @@ An article in the AT&T Technical Journal (March/April 1986, Vol. 65, pp. 39-50) 
 
 Replicate Factor Levels
 ```{r}
-flow_rates <- c('0.55','0.59')
-depo_times <- c('10','15')
+flow_rates <- c(0.55,0.59)
+depo_times <- c(10,15)
 epitaxial_data <- expand.grid(flow_rate=flow_rates,
                               depo_time=rep(depo_times,4))
 epitaxial_data <- cbind(epitaxial_data,
@@ -28,15 +39,32 @@ epitaxial_data <- cbind(epitaxial_data,
                                     16.165,13.860,14.757,14.921,
                                     13.972,14.032,14.843,14.415, 
                                     13.907,13.914,14.878,14.932))
-epitaxial_data %>% kable()
+
 ```
 
 
 ## a
 Estimate the factor effects.
 
+```{r}
+epitaxial_model <- lm(formula = thickness~flow_rate*depo_time,
+                       data=epitaxial_data)
+epitaxial_model$coefficients %>% kable()
+```
+
+
 ## b
 Conduct an analysis of variance. Which factors are important?
+
+```{r}
+anova(epitaxial_model)
+```
+
+deposition time is significant
+
+```{r}
+summary(epitaxial_model)
+```
 
 ## c
 Write down a regression equation that could be used to predict epitaxial layer thickness over the region of arsenic flow rate and deposition time used in this experiment.
