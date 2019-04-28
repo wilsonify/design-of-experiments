@@ -13,21 +13,52 @@ library(agricolae)
 ```
 
 
-
 # Problem 1:
 The effect of 4 types of graphite coater types on light box reading are to be studied. The readings might differ from day to day. Here assume we have a fixed effect model. Observations are taken for 3 days on the four types. The results are
 
+```{r}
+days<-c('d1','d2','d3')
+types<-c('t1','t2','t3','t4')
+graphite_data <- expand.grid(day=days,type=types)
+graphite_data <- cbind(graphite_data,light=c(4,4.8,4,
+                                             4.8,5,4.8,
+                                             5,5.2,5.6,
+                                             4.6,4.6,5))
+graphite_data %>% kable()
+```
 
 ## (a)
-Write the model equation _________________________
-State all the assumptions about residuals:  _________________________
-Note: Day is used as blocking factor.
+Note: Day is used as blocking factor
+
+Write the model equation 
+
+State all the assumptions about residuals  
+
 
 ## (b)
-Use definitions to estimate the model parameters ( 14 parameters), where : treatment effects and block effects
+Use definitions to estimate the model parameters ( 14 parameters)
+$$ 
+\mu_1, 
+\mu_2, 
+\mu_3, 
+\mu_4, 
+\mu_5,
+\tau_1, 
+\tau_2,
+\tau_3,
+\tau_4,
+\sigma^2,
+\beta_1,
+\beta_2,
+\beta_3,
+\beta_4
+$$
+where $\tau_i,\beta_j$ are treatment effects and block effects.
 
 ## (c)
-Test the hypothesis that the effects ( ie, mean effect) of the 4 graphite coater types are the same.
+
+Test the hypothesis that the effects ( ie, mean effect) of the 4 graphite coater types are the same. 
+
 Hypothesis:  Ho________________Ha__________
 
 Test statistic______________
@@ -38,12 +69,23 @@ Conclusion_________________
 
 ## (d)
 How would your analysis of variance be different if the experiment had not been blocked?
+
 Write the ANOVA table with the value of the test statistic and p-value.
 
 
 # Problem 2:
 The response time in milliseconds was determined for 3 different types of circuits that could be used in an automatic valve shutoff mechanism. The results from a completely randomized experiment are shown in the following table:
 
+```{r}
+circuit_types <- c('c1','c2','c3')
+circuit_data <- data.frame(circuit_type=rep(circuit_types,5),
+                           response_time=c(9,20,6,
+                                           12,21,5,
+                                           10,23,8,
+                                           8,17,16,
+                                           15,30,7))
+circuit_data
+```
 
 ## (a)
 Write the model equation:_________________________________
@@ -51,7 +93,17 @@ State all the assumptions about residuals:  _________________________
 
 ## (b)
 Use definitions and R to find the estimates for the following parameters:
-: treatment effects
+$$
+\mu_1,
+\mu_2,
+\mu_3,
+\mu,
+\tau_1,
+\tau_2,
+\tau_3,
+\sigma^2
+$$
+$\tau_i$ are treatment effects
 
 ## (c)
 Perform a Hypothesis Testing that the hypothesis to be tested for response time being equal for different circuit types.
@@ -82,7 +134,7 @@ Hypothesis :  Ho__________________; Ha________________
 
 Test statistics_____________________; P-value______________
 
-Conclustion:______________________
+Conclusion:______________________
 
 # Problem 3
 A study is conducted to compare 4 menus in terms of numbers of calories.
@@ -115,7 +167,7 @@ Write a 95%-CI for the difference, using Fisher LSD____________________
 Contrast  C:
 Write the contrast C which compares Menu 1 vs Menus {1,2,3} combined. ___________________________________
                 
-Calulate an estimate of C :  c=_________________
+Calculate an estimate of C :  c=_________________
   
 
 Calculate the standard error of the contrast: se(c ) =______________
@@ -127,8 +179,22 @@ Write a 95%-CI for  C, using t-distribution :___________________
 
 A router is useed to cut locating notches on a printed circuit board. The vibration level at the surface of the board as it is cut is considered to be a major source of dimensional variation in the notches. Two factors are thought to influence vibration: bit size (A) and cutting speed (B). Two sizes (1/16 and 1/8 inch) two speeds (40 and 90 rpm ) are selected and four boards are cut at each set of conditions shown below. The response variable is vibration measuerd as the resultant vecor of three accelerometers (x,y,z) on each test circuit board.
 
+```{r}
+bit_sizes <- c('1/16th','1/8th')
+speeds <- c('40','90')
+vibration_data <- expand.grid(bit_size = bit_sizes,
+                              speed = rep(speeds,4))
+vibration_data <- cbind(vibration_data,
+                        vibation=c(18.2,27.2,15.9,41.0,
+                                   18.9,24.0,14.5,43.9,
+                                   12.9,22.4,15.1,36.3,
+                                   14.4,22.5,14.2,39.9
+                                   ))
+vibration_data %>% kable()
+```
+
 ## (a)
-Caculate, from scratch, effects of A, B, AB[ Hint: Chapter 6]
+Calculate, from scratch, effects of A, B, AB[ Hint: Chapter 6]
 
 ## (b)
 Calculate the Sum Squares: SS(A), SS(B), SS(AB).

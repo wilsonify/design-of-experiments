@@ -10,25 +10,26 @@ knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(knitr)
 library(agricolae)
+library(rsm)
 ```
-
 
 
 # 1
 An article in the AT&T Technical Journal (March/April 1986, Vol. 65, pp. 39-50) describes the application of two-level factorial designs to integrated circuit manufacturing. A basic processing step is to grow an epitaxial layer on polished silicon wafers. The wafers mounted on a susceptor are positioned inside a bell jar, and chemical vapors are introduced. The susceptor is rotated and heat is applied until the epitaxial layer is thick enough. An experiment was run using two factors: arsenic flow rate (A) and deposition time (B). Four replicates were run, and the epitaxial layer thickness was measured in  um. The data are shown below:
 
 Replicate Factor Levels
-
-A 55%, 59%
-B 10 min, 15 min
-
-A B I     , II    , III   , IV
-- - 14.037, 16.165, 13.972, 13.907 
-+ - 13.880, 13.860, 14.032, 13.914
-- + 14.821, 14.757, 14.843, 14.878 
-+ + 14.888, 14.921, 14.415, 14.932
-
-
+```{r}
+flow_rates <- c('0.55','0.59')
+depo_times <- c('10','15')
+epitaxial_data <- expand.grid(flow_rate=flow_rates,
+                              depo_time=rep(depo_times,4))
+epitaxial_data <- cbind(epitaxial_data,
+                        thickness=c(14.037,13.880,14.821,14.888, 
+                                    16.165,13.860,14.757,14.921,
+                                    13.972,14.032,14.843,14.415, 
+                                    13.907,13.914,14.878,14.932))
+epitaxial_data %>% kable()
+```
 
 
 ## a
@@ -57,42 +58,23 @@ Perform a canonical analysis. Do a contour plot. Any optimal response?
 # 2
 A nickel-titanium alloy is used to make components for jet turbine aircraft engines. Cracking is a potentially serious problem in the final part, because it can lead to nonrecoverable failure. A test is run at the parts producer to determine the effect of four factors on cracks. The four factors are pouring temperature (A), titanium content (B), heat treatment method (C), and amount of grain refiner used (D). Two replicates of a  2^4  design are run, and the length of crack in mm  $\times 10^{-2}$  ? induced in a sample coupon subjected to a standard test is measured. The data are shown in the following table:
 
-
-7.037
-14.707
-11.635
-17.273
-10.403
-4.368
-9.360
-14.440
-8.561
-16.867
-13.876
-19.824
-11.846
-6.125
-11.190
-15.653
-
-6.376
-15.219
-12.089
-17.815
-10.151
-4.098
-9.253
-12.923
-8.951
-17.052
-13.658
-19.639
-12.337
-5.904
-10.935
-15.053
-
-
+```{r}
+low_high <- c('-','+')
+cracking_data <- expand.grid(pouring_temperature=low_high,
+                             titanium_content=low_high,
+                             heat_treatment_method=low_high,
+                             grain_refiners=rep(low_high,2))
+cracking_data <- cbind(cracking_data,
+                       crack_length=c(7.037,14.707,11.635,17.273,
+                                      10.403,4.368,9.360,14.440,
+                                      8.561,16.867,13.876,19.824,
+                                      11.846,6.125,11.190,15.653,
+                                      6.376,15.219,12.089,17.815,
+                                      10.151,4.098,9.253,12.923,
+                                      8.951,17.052,13.658,19.639,
+                                      12.337,5.904,10.935,15.053))
+cracking_data %>% kable()
+```
 
 
 
@@ -123,37 +105,62 @@ Perform a canonical analysis on the model. Is there an optimal response?
 Perform contour plot of Temp and Content.
 
 # 3
-Consider the three-variable central composite design shown below. Analyze the data and
-draw conclusions, assuming that we wish to maximize conversion (y,) with activity (y:)
-between 55 and 60.
+Consider the three-variable central composite design shown below. Analyze the data and draw conclusions, assuming that we wish to maximize conversion (y,) with activity (y:) between 55 and 60.
 
-Conversion
-Time ‘Temperature %, Activity
-Run (min) co v1 Ye
-1 1.000 -1.000 74.00 33.20
-2 1,000 -1.000 51.00 62.90
-3 1.000 1.000 88.00 3.40
-4 1.000 1.000 70.00 62.60
-5 -1.000 1.000 71.00 57.30
-6 1.000 1.000 90.00 67.90
-7 1.000 1.000 66.00 59.80
-8 1.000 1.000 97.00 67.80
-9 0.000 0.000 81.00 59.20
-10 0.000 0.000 75.00 60.40
-u 0.000 0.000 76.00 59.10
-2 0.000 0.000 3.00 60.60
-13 -1.682 0.000 16.00 59.10
-4 1.682 0.000 79.00 65.90
-18 0.000 1.682 85.00 60.00
-16 0.000 1.682 97.00 60.70
-7 0.000 0.000 35.00 7.40
-18 0,000 0.000 81.00 63.20
-19 0,000 0.000 80.00 60.80
-20 0.000 0.000 91.00 38.90
+```{r}
+```
+
+```{r}
+conversion_data <- ccd(3, n0 = c(4,2), alpha = "rotatable", randomize = FALSE)
+colnames(conversion_data) <- c('run','std.roder','time','temp','catalyst','Block')
+conversion_data <- cbind(conversion_data, 
+                         conversion = c(74.00,
+                                        51.00,
+                                        88.00,
+                                        70.00,
+                                        71.00,
+                                        90.00,
+                                        66.00,
+                                        97.00,
+                                        81.00,
+                                        75.00,
+                                        76.00,
+                                        83.00,
+                                        76.00,
+                                        79.00,
+                                        85.00,
+                                        97.00,
+                                        35.00,
+                                        81.00,
+                                        80.00,
+                                        91.00),
+                         activity = c(53.20,
+                                      62.90,
+                                      53.40,
+                                      62.60,
+                                      57.30,
+                                      67.90,
+                                      59.80,
+                                      67.80,
+                                      59.20,
+                                      60.40,
+                                      59.10,
+                                      60.60,
+                                      59.10,
+                                      65.90,
+                                      60.00,
+                                      60.70,
+                                      57.40,
+                                      63.20,
+                                      60.80,
+                                      38.90))
+conversion_data %>% kable()
+```
 
 
 ## a
 Estimate the factor effects. Which factors appear to be large?
+
 ## b
 Perform an analysis of variance. Do any factor affects . Use 
 
@@ -170,9 +177,10 @@ Perform a canonical analysis. Any optimal response. Do a contour plot of Time-Te
 The following data were collected by a chemical engineer. The response y is filtration time,  x_1 ; is temperature, and  x_3 ; is pressure. Fit a second-order model.
 
 ```{r}
-data.frame(x1=c(-1,-1,1,1,-1.414,1.414,0,0,0,0,0,0,0),
-           x2=c(-1,1,-1,1,0,0,-1.414,1.414,0,0,0,0,0),
-           y =c(54,45,32,47,50,53,47,51,41,39,44,42,40))
+fitration_data <- data.frame(x1=c(-1,-1,1,1,-1.414,1.414,0,0,0,0,0,0,0),
+                             x2=c(-1,1,-1,1,0,0,-1.414,1.414,0,0,0,0,0),
+                             y =c(54,45,32,47,50,53,47,51,41,39,44,42,40))
+fitration_data %>% kable()
 ```
 
 ## a
