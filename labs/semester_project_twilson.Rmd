@@ -95,6 +95,7 @@ LenthPlot(epitaxial_model, alpha = 0.05, plt =TRUE, limits = TRUE)
 Analyze the residuals. Are there any residuals that should cause concern?
 
 ```{r}
+par(mfrow=c(2,2))
 plot(epitaxial_model)
 ```
 There is 1 very serious outlier.
@@ -108,6 +109,7 @@ epitaxial_outlier_removed <- rsm(formula = thickness~FO(flow_rate,depo_time)+TWI
 ```
 
 ```{r}
+par(mfrow=c(2,2))
 plot(epitaxial_outlier_removed)
 ```
 
@@ -122,12 +124,18 @@ canonical(thickness_rsm)
 ```
 
 ```{r}
+par(mfrow=c(1,2))
 contour(epitaxial_outlier_removed,~flow_rate+depo_time)
 ```
 
 
 # 2
-A nickel-titanium alloy is used to make components for jet turbine aircraft engines. Cracking is a potentially serious problem in the final part, because it can lead to nonrecoverable failure. A test is run at the parts producer to determine the effect of four factors on cracks. The four factors are pouring temperature (A), titanium content (B), heat treatment method (C), and amount of grain refiner used (D). Two replicates of a  2^4  design are run, and the length of crack in mm  $\times 10^{-2}$  ? induced in a sample coupon subjected to a standard test is measured. The data are shown in the following table:
+A nickel-titanium alloy is used to make components for jet turbine aircraft engines.
+Cracking is a potentially serious problem in the final part, because it can lead to nonrecoverable failure. 
+A test is run at the parts producer to determine the effect of four factors on cracks. 
+The four factors are pouring temperature (A), titanium content (B), heat treatment method (C), and amount of grain refiner used (D).
+Two replicates of a  2^4  design are run, and the length of crack in mm  $\times 10^{-2}$  ? induced in a sample coupon subjected to a standard test is measured.
+The data are shown in the following table:
 
 ```{r}
 low_high <- c('-','+')
@@ -154,8 +162,19 @@ Estimate the factor effects, Which factor effects appear to be large?
 Change the factors name (Temp,Content,Method,Refiner,Length). 
 
 ```{r}
-cracking_model <- aov(formula=crack_length~.,data=cracking_data)
-summary(cracking_model)
+cracking_model <- lm(formula=crack_length~pouring_temperature*titanium_content*heat_treatment_method*grain_refiners, data=cracking_data)
+#summary(cracking_model)
+```
+
+```{r}
+cracking_model <- aov(formula=crack_length~pouring_temperature*titanium_content*heat_treatment_method*grain_refiners, data=cracking_data)
+#summary(cracking_model)
+```
+There are significant interactions between pouring_temperature,titanium_content, and heat_treatment_method 
+
+
+```{r}
+LenthPlot(cracking_model, alpha = 0.05, plt =TRUE, limits = TRUE)
 ```
 
 ## b
@@ -163,12 +182,36 @@ Conduct an analysis of variance. Do any of the factors affect cracking? Use  $\a
 Perform effects Daniel plot and Lenth plot.
 
 ```{r}
-anova(cracking_model)
+#summary(cracking_model)
+```
+
+```{r}
+DanielPlot(cracking_model)
 ```
 
 ## c
 Write down a regression model that can be used to predict crack length as a function of the significant main effects and interactions you have identified in part (b). Build a  RSM model (2nd order, 1st order with interaction). Choose one which works. 
 
+$$ crack\ length = 
+8.2565 pouring\ temperature + 
+5.1555 titanium\ content +
+$$
+$$
+3.5705 heat\ treatment\ method + 
+2.0495 grain\ refiners - 
+$$
+$$
+2.5745 pouring\ temperature \cdot titanium\ content -
+14.3005 pouring\ temperature \cdot heat\ treatment\ method - 
+$$
+$$
+6.1260 titanium\ content \dot heat\ treatment\ method + 
+12.9935 pouring\ temperature \cdot titanium\ content \cdot heat\ treatment\ method
+$$
+
+```{r}
+
+```
 
 ## d
 Analyze the residuals from this experiment. Take out outliers, if any.
