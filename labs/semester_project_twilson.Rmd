@@ -47,25 +47,20 @@ epitaxial_data <- cbind(epitaxial_data,
 Estimate the factor effects.
 
 ```{r}
-epitaxial_model <- lm(formula = thickness~flow_rate*depo_time,
+epitaxial_model <- aov(formula = thickness~flow_rate*depo_time,
                        data=epitaxial_data)
 epitaxial_model$coefficients %>% kable()
 ```
-
 
 ## b
 Conduct an analysis of variance. Which factors are important?
 
 ```{r}
-anova(epitaxial_model)
+summary(epitaxial_model)
 ```
 
 deposition time is significant
-while flow rate and the interaction are not siginifcantly different from coefficient=0
-
-```{r}
-summary(epitaxial_model)
-```
+while flow rate and the interaction are not siginifcant.
 
 ## c
 Write down a regression equation that could be used to predict epitaxial layer thickness over the region of arsenic flow rate and deposition time used in this experiment.
@@ -83,13 +78,15 @@ Perform Daniel plot and Lenth plot.  What is the model ‘s R-square.
 
 R-squared = 0.19
 
-```{r}
+```{r, message=FALSE}
 DanielPlot(epitaxial_model)
 ```
 
-```{r}
+```{r, message=FALSE}
 LenthPlot(epitaxial_model, alpha = 0.05, plt =TRUE, limits = TRUE)
 ```
+
+Flow rate has a large effect while depo time has a small effect.
 
 ## d
 Analyze the residuals. Are there any residuals that should cause concern?
@@ -98,9 +95,9 @@ Analyze the residuals. Are there any residuals that should cause concern?
 par(mfrow=c(2,2))
 plot(epitaxial_model)
 ```
-There is 1 very serious outlier.
+There is 1 very serious large outlier and a few less serious small outliers.
 
-Find the cook distance. Take out the outlier(s). Rebuilt the rsm model on new data.
+Find the cook distance. Take out the outlier(s). Rebuild the rsm model on new data.
 
 ```{r}
 is_not_outlier <- cooks.distance(epitaxial_model)<0.025
@@ -116,6 +113,11 @@ plot(epitaxial_outlier_removed)
 ## e
 Discuss how you might deal with the potential outlier found in part (d).
 
+* Analyse the data with and without outliers removed.
+* create an indication of outliers and analyze its effect on thickness.
+* Cross validate
+
+
 ## f
 Perform a canonical analysis. Do a contour plot. Any optimal response?
 
@@ -127,7 +129,8 @@ canonical(thickness_rsm)
 par(mfrow=c(1,2))
 contour(epitaxial_outlier_removed,~flow_rate+depo_time)
 ```
-
+There is a maximum thickness as depo time = 15.3174956  flow rate = 0.5283659 
+contours are planar, so the design space is not suffcient to find a global extremum.
 
 # 2
 A nickel-titanium alloy is used to make components for jet turbine aircraft engines.
@@ -139,12 +142,12 @@ The data are shown in the following table:
 
 ```{r}
 low_high <- c('-','+')
-cracking_data <- expand.grid(pouring_temperature=low_high,
-                             titanium_content=low_high,
-                             heat_treatment_method=low_high,
-                             grain_refiners=rep(low_high,2))
+cracking_data <- expand.grid(temp=low_high,
+                             content=low_high,
+                             method=low_high,
+                             refiner=rep(low_high,2))
 cracking_data <- cbind(cracking_data,
-                       crack_length=c(7.037,14.707,11.635,17.273,
+                       length=c(7.037,14.707,11.635,17.273,
                                       10.403,4.368,9.360,14.440,
                                       8.561,16.867,13.876,19.824,
                                       11.846,6.125,11.190,15.653,
@@ -156,33 +159,38 @@ cracking_data %>% kable()
 ```
 
 
-
 ## a
 Estimate the factor effects, Which factor effects appear to be large?
 Change the factors name (Temp,Content,Method,Refiner,Length). 
 
 ```{r}
-cracking_model <- lm(formula=crack_length~pouring_temperature*titanium_content*heat_treatment_method*grain_refiners, data=cracking_data)
-#summary(cracking_model)
+cracking_model <- aov(formula=length~temp*content*method*refiner, data=cracking_data)
+coef(cracking_model) %>% kable()
 ```
 
 ```{r}
-cracking_model <- aov(formula=crack_length~pouring_temperature*titanium_content*heat_treatment_method*grain_refiners, data=cracking_data)
-#summary(cracking_model)
+summary(cracking_model)
 ```
-There are significant interactions between pouring_temperature,titanium_content, and heat_treatment_method 
-
+There are significant interactions between pouring temperature, titanium content, and heat treatment method.
+temp, content, method, refiner, temp:content, temp:method are also significant.
 
 ```{r}
-LenthPlot(cracking_model, alpha = 0.05, plt =TRUE, limits = TRUE)
+LenthPlot(cracking_model, alpha = 0.05, plt =TRUE)
 ```
+These 6 coefficients are large:
+content+:method+	-6.126
+temp+:method+	-14.3005
+temp+:content+:method+	12.9935
+temp+	8.2565
+content+	5.1555
+method+	3.5705
 
 ## b
 Conduct an analysis of variance. Do any of the factors affect cracking? Use  $\alpha = 0.05$ .
 Perform effects Daniel plot and Lenth plot.
 
 ```{r}
-#summary(cracking_model)
+summary(cracking_model)
 ```
 
 ```{r}
@@ -191,6 +199,7 @@ DanielPlot(cracking_model)
 
 ## c
 Write down a regression model that can be used to predict crack length as a function of the significant main effects and interactions you have identified in part (b). Build a  RSM model (2nd order, 1st order with interaction). Choose one which works. 
+
 
 $$ crack\ length = 
 8.2565 pouring\ temperature + 
@@ -209,21 +218,30 @@ $$
 12.9935 pouring\ temperature \cdot titanium\ content \cdot heat\ treatment\ method
 $$
 
-```{r}
-
-```
+cannot create rsm without numeric values for high and low settings of each factor.
 
 ## d
 Analyze the residuals from this experiment. Take out outliers, if any.
 
+```{r}
+par(mfrow=c(2,2))
+plot(cracking_model)
+```
+
+The residuals are homoscedastic. No serious outliers.
+
 ## e
 Is there an indication that any of the factors affect the variability in cracking?
 
+No
 
 ## f
 What recommendations would you make regarding process operations? Use interaction and/or main effect plots to assist in drawing conclusions.
 Perform a canonical analysis on the model. Is there an optimal response?
 Perform contour plot of Temp and Content.
+
+Recommend to focus on temp, content, and method. Leverage the interaction between them. 
+
 
 # 3
 Consider the three-variable central composite design shown below. Analyze the data and draw conclusions, assuming that we wish to maximize conversion (y,) with activity (y:) between 55 and 60.
