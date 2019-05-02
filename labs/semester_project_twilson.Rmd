@@ -39,7 +39,7 @@ epitaxial_data <- cbind(epitaxial_data,
                                     16.165,13.860,14.757,14.921,
                                     13.972,14.032,14.843,14.415, 
                                     13.907,13.914,14.878,14.932))
-
+epitaxial_data %>% kable()
 ```
 
 
@@ -100,7 +100,7 @@ There is 1 very serious large outlier and a few less serious small outliers.
 Find the cook distance. Take out the outlier(s). Rebuild the rsm model on new data.
 
 ```{r}
-is_not_outlier <- cooks.distance(epitaxial_model)<0.025
+is_not_outlier <- cooks.distance(epitaxial_model) < 0.18 
 epitaxial_outlier_removed <- rsm(formula = thickness~FO(flow_rate,depo_time)+TWI(flow_rate,depo_time),
                                 data=epitaxial_data[is_not_outlier,])
 ```
@@ -156,6 +156,7 @@ cracking_data <- cbind(cracking_data,
                                       8.951,17.052,13.658,19.639,
                                       12.337,5.904,10.935,15.053))
 cracking_data %>% kable()
+
 ```
 
 
@@ -247,9 +248,6 @@ Recommend to focus on temp, content, and method. Leverage the interaction betwee
 Consider the three-variable central composite design shown below. Analyze the data and draw conclusions, assuming that we wish to maximize conversion (y,) with activity (y:) between 55 and 60.
 
 ```{r}
-```
-
-```{r}
 conversion_data <- ccd(3, n0 = c(4,2), alpha = "rotatable", randomize = FALSE)
 colnames(conversion_data) <- c('run','std.roder','time','temp','catalyst','Block')
 conversion_data <- cbind(conversion_data, 
@@ -266,9 +264,12 @@ conversion_data <- cbind(conversion_data,
 conversion_data %>% kable()
 ```
 
-
 ## a
 Estimate the factor effects. Which factors appear to be large?
+
+```{r}
+conversion_model <- aov()
+```
 
 ## b
 Perform an analysis of variance. Do any factor affects . Use 
@@ -290,6 +291,7 @@ fitration_data <- data.frame(x1=c(-1,-1,1,1,-1.414,1.414,0,0,0,0,0,0,0),
                              x2=c(-1,1,-1,1,0,0,-1.414,1.414,0,0,0,0,0),
                              y =c(54,45,32,47,50,53,47,51,41,39,44,42,40))
 fitration_data %>% kable()
+fitration_data %>% write.csv("04fitration_data.csv")
 ```
 
 ## a

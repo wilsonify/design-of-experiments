@@ -25,6 +25,7 @@ graphite_data <- cbind(graphite_data,light=c(4,4.8,4,
                                              5,5.2,5.6,
                                              4.6,4.6,5))
 graphite_data %>% kable()
+graphite_data %>% write.csv("exam01graphite_data.csv")
 ```
 
 ## (a)
@@ -85,6 +86,7 @@ circuit_data <- data.frame(circuit_type=rep(circuit_types,5),
                                            8,17,16,
                                            15,30,7))
 circuit_data
+circuit_data %>% write.csv("exam02circuit_data.csv")
 ```
 
 ## (a)
@@ -191,6 +193,7 @@ vibration_data <- cbind(vibration_data,
                                    14.4,22.5,14.2,39.9
                                    ))
 vibration_data %>% kable()
+vibration_data %>% write.csv("exam04vibration_data.csv")
 ```
 
 ## (a)
