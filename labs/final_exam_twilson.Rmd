@@ -25,36 +25,54 @@ graphite_data <- cbind(graphite_data,light=c(4,4.8,4,
                                              5,5.2,5.6,
                                              4.6,4.6,5))
 graphite_data %>% kable()
-graphite_data %>% write.csv("exam01graphite_data.csv")
 ```
 
 ## (a)
 Note: Day is used as blocking factor
 
 Write the model equation 
+Let y be the repsose in light, b be Day (the blocking factor), and tau be the type treatment.
+
+$ y_{ij} = \mu + b_i + \tau_j + \epsilon_{ij} $
+
 
 State all the assumptions about residuals  
 
+This model assumes that the error term is normally distirbuted with mean of zero and homogenous variance of $\sigma^2$ across levels of the treatment and block.
 
 ## (b)
 Use definitions to estimate the model parameters ( 14 parameters)
-$$ 
-\mu_1, 
-\mu_2, 
-\mu_3, 
-\mu_4, 
-\mu_5,
-\tau_1, 
-\tau_2,
-\tau_3,
-\tau_4,
-\sigma^2,
-\beta_1,
-\beta_2,
-\beta_3,
-\beta_4
-$$
-where $\tau_i,\beta_j$ are treatment effects and block effects.
+$$ \mu_1 = 4.78, $$
+
+$$ \mu_2, $$
+$$\mu_3,  $$
+$$\mu_4,  $$
+
+$$\tau_1,  $$
+$$\tau_2, $$
+
+$$\tau_3, $$
+$$\tau_4, $$
+
+$$\sigma^2,$$
+
+$$\beta_1, $$
+
+$$\beta_2, $$
+
+$$\beta_3, $$
+
+\where $\tau_i,\beta_j$ are treatment effects and block effects.
+
+```{r}
+mean(graphite_data$light)
+```
+
+```{r}
+graphite_model <- aov(formula = light ~ day+type, data=graphite_data)
+coef(graphite_model) %>% kable()
+```
+
 
 ## (c)
 
@@ -86,7 +104,6 @@ circuit_data <- data.frame(circuit_type=rep(circuit_types,5),
                                            8,17,16,
                                            15,30,7))
 circuit_data
-circuit_data %>% write.csv("exam02circuit_data.csv")
 ```
 
 ## (a)
@@ -193,7 +210,6 @@ vibration_data <- cbind(vibration_data,
                                    14.4,22.5,14.2,39.9
                                    ))
 vibration_data %>% kable()
-vibration_data %>% write.csv("exam04vibration_data.csv")
 ```
 
 ## (a)

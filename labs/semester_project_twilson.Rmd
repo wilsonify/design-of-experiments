@@ -14,14 +14,14 @@ library(rsm)
 library(daewr)
 library(gmodels)
 library(MASS)
-library(lsmeans)
+#library(lsmeans)
 library(BsMD)
 library(lme4)
 library(FrF2)
 library(DoE.base)
 library(AlgDesign)
 library(leaps)
-library(GAD)
+#library(GAD)
 ```
 
 
@@ -59,8 +59,8 @@ Conduct an analysis of variance. Which factors are important?
 summary(epitaxial_model)
 ```
 
-deposition time is significant
-while flow rate and the interaction are not siginifcant.
+deposition time is significant and the effect is large.
+flow rate effect is large, but insignificant.
 
 ## c
 Write down a regression equation that could be used to predict epitaxial layer thickness over the region of arsenic flow rate and deposition time used in this experiment.
@@ -100,7 +100,7 @@ There is 1 very serious large outlier and a few less serious small outliers.
 Find the cook distance. Take out the outlier(s). Rebuild the rsm model on new data.
 
 ```{r}
-is_not_outlier <- cooks.distance(epitaxial_model) < 0.18 
+is_not_outlier <- cooks.distance(epitaxial_model) < 0.2 
 epitaxial_outlier_removed <- rsm(formula = thickness~FO(flow_rate,depo_time)+TWI(flow_rate,depo_time),
                                 data=epitaxial_data[is_not_outlier,])
 ```
@@ -141,7 +141,7 @@ Two replicates of a  2^4  design are run, and the length of crack in mm  $\times
 The data are shown in the following table:
 
 ```{r}
-low_high <- c('-','+')
+low_high <- c(-1,1)
 cracking_data <- expand.grid(temp=low_high,
                              content=low_high,
                              method=low_high,
@@ -156,7 +156,6 @@ cracking_data <- cbind(cracking_data,
                                       8.951,17.052,13.658,19.639,
                                       12.337,5.904,10.935,15.053))
 cracking_data %>% kable()
-
 ```
 
 
@@ -221,6 +220,15 @@ $$
 
 cannot create rsm without numeric values for high and low settings of each factor.
 
+```{r}
+cracking_rsm <- rsm(formula=length~FO(temp,content,method,refiner) + TWI(temp,content,method,refiner),data=cracking_data) 
+summary(cracking_rsm) 
+```
+
+```{r}
+
+```
+
 ## d
 Analyze the residuals from this experiment. Take out outliers, if any.
 
@@ -284,19 +292,36 @@ Perform a residual analysis. Take out any outlyers.
 Perform a canonical analysis. Any optimal response. Do a contour plot of Time-Temperature, Time-Catalyst, Temp-Catalyst.
 
 # 4
-The following data were collected by a chemical engineer. The response y is filtration time,  x_1 ; is temperature, and  x_3 ; is pressure. Fit a second-order model.
+The following data were collected by a chemical engineer. The response y is filtration time,  x_1 ; is temperature, and  x_2 ; is pressure. Fit a second-order model.
 
 ```{r}
-fitration_data <- data.frame(x1=c(-1,-1,1,1,-1.414,1.414,0,0,0,0,0,0,0),
+filtration_data <- data.frame(x1=c(-1,-1,1,1,-1.414,1.414,0,0,0,0,0,0,0),
                              x2=c(-1,1,-1,1,0,0,-1.414,1.414,0,0,0,0,0),
                              y =c(54,45,32,47,50,53,47,51,41,39,44,42,40))
-fitration_data %>% kable()
-fitration_data %>% write.csv("04fitration_data.csv")
+filtration_data %>% kable()
 ```
 
 ## a
 What operating conditions would you recommend if the objective is to minimize the filtration time?
 
+```{r}
+filtration_model <- rsm(formula =y~FO(x1,x2)+TWI(x1,x2), data=filtration_data)
+canonical(filtration_model)
+```
+
+There is a minimum at x1=-0.243 and x2=0.328
+
 ## b
 What operating conditions would you recommend if the objective is to operate the process at a mean filtration rate very close to 46?
 
+```{r}
+cost<-function(x) {
+  yield <- predict(filtration_model,x)
+  return(yield)
+}
+
+start<-c(-0.243,0.328)
+ui<-matrix(c(1,-1,0,0,0,0,1,-1),4,2)
+ci<-c(1.414,-1.414,1.414,-1.414)
+constrOptim(start,prod,NULL,ui,ci)
+```
