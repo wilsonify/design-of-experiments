@@ -275,9 +275,6 @@ conversion_data %>% kable()
 ## a
 Estimate the factor effects. Which factors appear to be large?
 
-```{r}
-conversion_model <- aov()
-```
 
 ## b
 Perform an analysis of variance. Do any factor affects . Use 
