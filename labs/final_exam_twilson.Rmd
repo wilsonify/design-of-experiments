@@ -6,7 +6,7 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE, message=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 library(dplyr)
 library(knitr)
 library(agricolae)
@@ -33,7 +33,7 @@ Note: Day is used as blocking factor
 
 Write the model equation 
 Let y be the response of light, b be Day (the blocking factor), and tau be the type treatment.
-i and j are the level of day and type respectively. I and J are the number of levels, n is the number of observations. $\tau_i,\beta_j$ are treatment effects and block effects.
+i and j are the level of day and type respectively. I and J are the number of levels, n is the number of observations. $\tau_i, b_j$ are treatment effects and block effects.
 
 $$ y_{ij} = \mu + b_i + \tau_j + \epsilon_{ij} $$
 
@@ -111,7 +111,7 @@ circuit_data <- data.frame(circuit_type=rep(circuit_types,5),
                                            10,23,8,
                                            8,17,16,
                                            15,30,7))
-circuit_data
+circuit_data %>% kable()
 ```
 
 ## (a)
@@ -126,9 +126,7 @@ $\tau_i$ are treatment effects
 
 
 ## (b)
-```{r}
-circuit_data %>% group_by(circuit_type) %>% summarise(n=length(response_time),s=sum(response_time),mu=mean(response_time))
-```
+
 Use definitions and R to find the estimates for the following parameters:
 $$ \mu = \frac{1}{n} \sum_{i=1}^{3} \sum_{r=1}^{5} y_{ir} = \frac{207}{15} =  13.8 $$
 $$ \mu_1 = \frac{1}{R} \sum_{r=1}^{5} y_{1,r} = \frac{54}{5} =  10.8 $$
@@ -143,7 +141,6 @@ $$ \sigma^2 = \frac{1}{(n-I)} \sum_{i=1}^{3} \sum_{r=1}^{5}  \epsilon_{ir}^2  = 
 
 ```{r}
 circuit_model <- aov(formula = response_time~circuit_type,data=circuit_data)
-anova(circuit_model)
 ```
 
 ## (c)
@@ -176,9 +173,9 @@ $\frac{\mu_1 + \mu_3}{2} = \mu_2$
 
 Perform the appropriate test for the contrast.
 
-Write Contrast  C: 1,-2,1
+Write Contrast : 1,-2,1
 
-Find the estimate :  c = -25.2 se(c) = 4.5
+Find the estimate :  $c = -25.2$ , $se(c) = 4.5$
 ```{r}
 fit.contrast(circuit_model,'circuit_type',coeff = c(1,-2,1))
 ```
@@ -241,12 +238,8 @@ Compute the standard error : 1.565
 
 ```{r}
 t <- qt(1-0.025,40)
-t
 ```
 
-```{r}
-2.02*1.565*0.3162
-```
 
 $$ LSD = t * SE * \sqrt{\frac{1}{20} + \frac{1}{20}} = 2.02*1.565*0.3162 = 0.9996 $$
 Compute the Fisher LSD 0.9996
@@ -269,21 +262,12 @@ $$0 = \mu_1 -3\mu_1 + \mu_2 + \mu_3 $$
 (-2,1,1,0)
                 
 Calculate an estimate of C :  c=-2.4
-```{r}
--2*17.6+16.8+16.0
-```
-  
+
 
 Calculate the standard error of the contrast: se(c ) =3.13
 
-```{r}
-sqrt(4*1.565^2)
-```
 
 Write a 95%-CI for  C, using t-distribution :(-6.26,6.26)
-```{r}
-qt(1-0.025,60)*3.13
-```
 
 # Problem 4
 
@@ -308,7 +292,7 @@ vibration_data %>% kable()
 ## (a)
 Calculate, from scratch, effects of A, B, AB[ Hint: Chapter 6]
 
-```{r}
+```{r, echo=TRUE}
 n <- 4
 one <- (18.2+18.9+12.9+14.4)
 a <- (27.2+24.0+22.4+22.5)
@@ -317,10 +301,8 @@ ab <- (41.0+43.9+36.3+39.9)
 A <- 1/(2*n) * ((ab-b)+(a-one))
 B <- 1/(2*n) * ((ab-a)+(b-one))
 AB <- 1/(2*n) * ((ab-b)+(a-one)) 
-A
-B
-AB
 ```
+
 A = 16.6375
 B = 7.5375
 AB = 16.6
@@ -328,13 +310,10 @@ AB = 16.6
 ## (b)
 Calculate the Sum Squares: SS(A), SS(B), SS(AB).
 
-```{r}
+```{r, echo=TRUE}
 SSA  <- (ab+a-b-one)^2/(4*n)
 SSB  <- (ab+b-a-one)^2/(4*n)
 SSAB <- (ab+one-a-b)^2/(4*n)
-SSA
-SSB
-SSAB
 ```
 SSA = 1107.226
 SSB = 227.2556
@@ -342,11 +321,9 @@ SSAB = 303.6306
 
 ## (c)
 Complete the ANOVA table: df, MS, F-stat, P-values of A, B, AB
-```{r}
+```{r, echo=TRUE}
 SST <- sum(vibration_data$vibation^2) - mean(vibration_data$vibation)^2/(4*n)
 SSE <- SST - SSA - SSB - SSAB
-SST
-SSE
 ```
 SST = 10761.19
 SSE = 9123.083
@@ -364,20 +341,22 @@ SSE = 9123.083
 ## (d)
 Use R,  find the model matrix X.
 
-```{R}
+```{R, echo=TRUE}
 model_matrix <- cbind(1,vibration_data[,c('bit_size','speed','interaction')])
 X <- model_matrix %>% as.matrix
 y <- vibration_data$vibation
 X %>% kable()
-
 ```
 
 Use X to calculate the vector of  coefficients   ,  for the regression model.
 
-```{r}
+```{r, echo=TRUE}
 solve(t(X)%*%X) %*% t(X) %*% y
 ```
 $B_0 = 16.1$
+
 $B_A = 7.925$
+
 $B_B = -1.175$
-$B_AB = 17.425$
+
+$B_{AB} = 17.425$
