@@ -6,7 +6,7 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE, message=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 library(dplyr)
 library(knitr)
 library(agricolae)
@@ -28,8 +28,7 @@ library(leaps)
 # 1
 An article in the AT&T Technical Journal (March/April 1986, Vol. 65, pp. 39-50) describes the application of two-level factorial designs to integrated circuit manufacturing. A basic processing step is to grow an epitaxial layer on polished silicon wafers. The wafers mounted on a susceptor are positioned inside a bell jar, and chemical vapors are introduced. The susceptor is rotated and heat is applied until the epitaxial layer is thick enough. An experiment was run using two factors: arsenic flow rate (A) and deposition time (B). Four replicates were run, and the epitaxial layer thickness was measured in  um. The data are shown below:
 
-Replicate Factor Levels
-```{r}
+```{r epitaxialdata}
 flow_rates <- c(0.55,0.59)
 depo_times <- c(10,15)
 epitaxial_data <- expand.grid(flow_rate=flow_rates,
@@ -39,17 +38,23 @@ epitaxial_data <- cbind(epitaxial_data,
                                     16.165,13.860,14.757,14.921,
                                     13.972,14.032,14.843,14.415, 
                                     13.907,13.914,14.878,14.932))
-epitaxial_data %>% kable()
+epitaxial_data %>% kable(caption = "Predictors of Filament usage")
 ```
 
 
 ## a
-Estimate the factor effects.
+Estimate the factor effects. 
+Based on a simple first order analysis of variance, the model effects are summarized below.
 
-```{r}
+```{r thicknesseffects}
+epitaxial_model_lm <- lm(formula = thickness~flow_rate*depo_time,
+                       data=epitaxial_data)
+summary(epitaxial_model_lm)
 epitaxial_model <- aov(formula = thickness~flow_rate*depo_time,
                        data=epitaxial_data)
-epitaxial_model$coefficients %>% kable()
+epitaxial_effects <- epitaxial_model$coefficients %>% as.data.frame() 
+colnames(epitaxial_effects) <- c("effect")
+epitaxial_effects %>% kable()
 ```
 
 ## b
@@ -58,25 +63,29 @@ Conduct an analysis of variance. Which factors are important?
 ```{r}
 summary(epitaxial_model)
 ```
-
-deposition time is significant and the effect is large.
+Important factors should have both significant and large effects.
+deposition time is significant at a level of 90% and the effect is large.
 flow rate effect is large, but insignificant.
 
 ## c
 Write down a regression equation that could be used to predict epitaxial layer thickness over the region of arsenic flow rate and deposition time used in this experiment.
 
-$thickness = 37.627 - 43.119 flow\ rate - 1.148deposition\ time $
+$$ thickness = 37.627 - 43.119 flow\ rate - 1.148deposition\ time $$
 
 Build a RSM  model (2nd order, 1st order with interaction). Choose one which works. 
 
 ```{r}
-thickness_rsm <- rsm( thickness ~ FO(depo_time,flow_rate) + TWI(depo_time,flow_rate) , data=epitaxial_data)
-summary(thickness_rsm)
+thickness_rsm_twi <- rsm( thickness ~ FO(depo_time,flow_rate) + TWI(depo_time,flow_rate) , data=epitaxial_data)
+#summary(thickness_rsm_twi)
+
+thickness_rsm_so <- rsm( thickness ~ SO(depo_time,flow_rate) , data=epitaxial_data)
+#summary(thickness_rsm_so)
+
 ```
 
 Perform Daniel plot and Lenth plot.  What is the model ‘s R-square.
 
-R-squared = 0.19
+both response surface models have an R-squared of 0.19. Quadratic terms were not able to be calculated from this experiment. a Center point is needed to test for inflection.
 
 ```{r, message=FALSE}
 DanielPlot(epitaxial_model)
@@ -122,15 +131,16 @@ Discuss how you might deal with the potential outlier found in part (d).
 Perform a canonical analysis. Do a contour plot. Any optimal response?
 
 ```{r}
-canonical(thickness_rsm)
+canonical(thickness_rsm_twi)
 ```
 
 ```{r}
 par(mfrow=c(1,2))
 contour(epitaxial_outlier_removed,~flow_rate+depo_time)
 ```
-There is a maximum thickness as depo time = 15.3174956  flow rate = 0.5283659 
+There is a maximum thickness at depo time = 15.3174956  flow rate = 0.5283659 
 contours are planar, so the design space is not suffcient to find a global extremum.
+I would suggest the next experiment characterize along the gradient of this plane.
 
 # 2
 A nickel-titanium alloy is used to make components for jet turbine aircraft engines.
@@ -165,7 +175,9 @@ Change the factors name (Temp,Content,Method,Refiner,Length).
 
 ```{r}
 cracking_model <- aov(formula=length~temp*content*method*refiner, data=cracking_data)
-coef(cracking_model) %>% kable()
+cracking_coef <- coef(cracking_model) %>% as.data.frame()
+colnames(cracking_coef) <- c('effect')
+cracking_coef %>% kable()
 ```
 
 ```{r}
@@ -196,6 +208,8 @@ summary(cracking_model)
 ```{r}
 DanielPlot(cracking_model)
 ```
+
+content, method, and the interaction between temp:method, and temp:content:method are the most important effects.
 
 ## c
 Write down a regression model that can be used to predict crack length as a function of the significant main effects and interactions you have identified in part (b). Build a  RSM model (2nd order, 1st order with interaction). Choose one which works. 
@@ -317,8 +331,8 @@ cost<-function(x) {
   return(yield)
 }
 
-start<-c(-0.243,0.328)
-ui<-matrix(c(1,-1,0,0,0,0,1,-1),4,2)
-ci<-c(1.414,-1.414,1.414,-1.414)
-constrOptim(start,prod,NULL,ui,ci)
+start <- c(-0.243,0.328)
+ui <- matrix(c(1,-1,0,0,0,0,1,-1),4,2)
+ci <- c(1.414,-1.414,1.414,-1.414)
+#constrOptim(start,prod,NULL,ui,ci)
 ```
