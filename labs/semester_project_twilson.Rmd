@@ -22,6 +22,7 @@ library(DoE.base)
 library(AlgDesign)
 library(leaps)
 #library(GAD)
+library(chemCal)
 ```
 
 
@@ -326,13 +327,12 @@ There is a minimum at x1=-0.243 and x2=0.328
 What operating conditions would you recommend if the objective is to operate the process at a mean filtration rate very close to 46?
 
 ```{r}
-cost<-function(x) {
-  yield <- predict(filtration_model,x)
-  return(yield)
-}
+include_graphics('desireability.png')
+```
 
-start <- c(-0.243,0.328)
-ui <- matrix(c(1,-1,0,0,0,0,1,-1),4,2)
-ci <- c(1.414,-1.414,1.414,-1.414)
-#constrOptim(start,prod,NULL,ui,ci)
+
+operating at (-0.415, -0.3) is predicted to result in an average of 46.1 and also minimize sensitivity to changes in x1. There is a saddle point in the response surface, so there is potential for instability.
+
+```{r}
+include_graphics('surface.png')
 ```
