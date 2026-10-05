@@ -37,3 +37,6 @@ rsconnect/
 .Rproj.user
 
 .ipynb_checkpoints/
+
+*.pdf
+raw.txt
