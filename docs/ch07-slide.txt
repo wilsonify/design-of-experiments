@@ -1,0 +1,126 @@
+# Source: ch07.pptx
+# Slides: 15
+
+## Slide 1
+Design of Engineering Experiments
+Blocking & Confounding in the 2k
+Text reference, Chapter 7
+Blocking is a technique for dealing with controllable nuisance variables
+Two cases are considered
+Replicated designs
+Unreplicated designs
+Chapter 7
+Design & Analysis of Experiments 8E 2012 Montgomery
+1
+
+## Slide 2
+Chapter 7
+Design & Analysis of Experiments 8E 2012 Montgomery
+2
+
+## Slide 3
+Blocking a Replicated Design
+This is the same scenario discussed previously in Chapter 5
+If there are n replicates of the design, then each replicate is a block
+Each replicate is run in one of the blocks (time periods, batches of raw material, etc.)
+Runs within the block are randomized
+Chapter 7
+Design & Analysis of Experiments 8E 2012 Montgomery
+3
+
+## Slide 4
+Blocking a Replicated Design
+Consider the example from Section 6-2; k = 2 factors, n = 3 replicates
+This is the “usual” method for calculating a block sum of squares
+Chapter 7
+Design & Analysis of Experiments 8E 2012 Montgomery
+4
+
+## Slide 5
+ANOVA for the Blocked Design
+Page 305
+Chapter 7
+Design & Analysis of Experiments 8E 2012 Montgomery
+5
+
+## Slide 6
+Confounding in Blocks
+Now consider the unreplicated case
+Clearly the previous discussion does not apply, since there is only one replicate
+To illustrate, consider the situation of Example 6.2, the resin plant experiment
+This is a 24, n = 1 replicate
+Chapter 7
+Design & Analysis of Experiments 8E 2012 Montgomery
+6
+
+## Slide 7
+Experiment from Example 6.2
+Suppose only 8 runs can be made from one batch of raw material
+Chapter 7
+Design & Analysis of Experiments 8E 2012 Montgomery
+7
+
+## Slide 8
+The Table of + & - Signs, Example 6-4
+Chapter 7
+Design & Analysis of Experiments 8E 2012 Montgomery
+8
+
+## Slide 9
+ABCD is Confounded with Blocks
+(Page 310)
+Observations in block 1 are reduced by 20 units…this is the simulated “block effect”
+Chapter 7
+Design & Analysis of Experiments 8E 2012 Montgomery
+9
+
+## Slide 10
+Effect Estimates
+Chapter 7
+Design & Analysis of Experiments 8E 2012 Montgomery
+10
+
+## Slide 11
+The ANOVA
+The ABCD interaction (or the block effect) is not considered as part of the error term
+The reset of the analysis is unchanged from the original analysis
+Chapter 7
+Design & Analysis of Experiments 8E 2012 Montgomery
+11
+
+## Slide 12
+Another Illustration of the Importance of Blocking
+Now the first eight runs (in run order) have filtration rate reduced by 20 units
+Chapter 7
+Design & Analysis of Experiments 8E 2012 Montgomery
+12
+
+## Slide 13
+The interpretation is harder; not as easy to identify the large effects
+One important interaction is not identified (AD)
+Failing to block when we should have causes problems in interpretation the result of an experiment and can mask the presence of real factor effects
+Chapter 7
+Design & Analysis of Experiments 8E 2012 Montgomery
+13
+
+## Slide 14
+Confounding in Blocks
+More than two blocks (page 313)
+The two-level factorial can be confounded in 2, 4, 8, … (2p, p > 1) blocks
+For four blocks, select two effects to confound, automatically confounding a third effect
+See example, page 314
+Choice of confounding schemes non-trivial; see Table 7.9, page 316
+Partial confounding (page 316)
+Chapter 7
+Design & Analysis of Experiments 8E 2012 Montgomery
+14
+
+## Slide 15
+General Advice About Blocking
+When in doubt, block
+Block out the nuisance variables you know about, randomize as much as possible and rely on randomization to help balance out unknown nuisance effects
+Measure the nuisance factors you know about but can’t control (ANCOVA)
+It may be a good idea to conduct the experiment in blocks even if there isn't an obvious nuisance factor, just to protect against the loss of data or situations where the complete experiment can’t be finished
+Chapter 7
+Design & Analysis of Experiments 8E 2012 Montgomery
+15

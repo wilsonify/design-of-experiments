@@ -1,0 +1,271 @@
+# Source: ch04.pptx
+# Slides: 31
+
+## Slide 1
+Design of Engineering Experiments
+– The Blocking Principle
+Text Reference, Chapter 4
+Blocking and nuisance factors
+The randomized complete block design or the RCBD
+Extension of the ANOVA to the RCBD
+Other blocking scenarios…Latin square designs
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+1
+
+## Slide 2
+The Blocking Principle
+Blocking is a technique for dealing with nuisance factors
+A nuisance factor is a factor that probably has some effect on the response, but it’s of no interest to the experimenter…however, the variability it transmits to the response needs to be minimized
+Typical nuisance factors include batches of raw material, operators, pieces of test equipment, time (shifts, days, etc.), different experimental units
+Many industrial experiments involve blocking (or should)
+Failure to block is a common flaw in designing an experiment (consequences?)
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+2
+
+## Slide 3
+The Blocking Principle
+If the nuisance variable is known and controllable, we use blocking
+If the nuisance factor is known and uncontrollable, sometimes we can use the analysis of covariance (see Chapter 15) to remove the effect of the nuisance factor from the analysis
+If the nuisance factor is unknown and uncontrollable (a “lurking” variable), we hope that randomization balances out its impact across the experiment
+Sometimes several sources of variability are combined in a block, so the block becomes an aggregate variable
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+3
+
+## Slide 4
+The Hardness Testing Example
+Text reference, pg 139, 140
+We wish to determine whether 4 different tips produce different (mean) hardness reading on a Rockwell hardness tester
+Gauge & measurement systems capability studies are frequent areas for applying DOX
+Assignment of the tips to an experimental unit; that is, a test coupon
+Structure of a completely randomized experiment
+The test coupons are a source of nuisance variability
+Alternatively, the experimenter may want to test the tips across coupons of various hardness levels
+The need for blocking
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+4
+
+## Slide 5
+The Hardness Testing Example
+To conduct this experiment as a RCBD, assign all 4 tips to each coupon
+Each coupon is called a “block”; that is, it’s a more homogenous experimental unit on which to test the tips
+Variability between blocks can be large, variability within a block should be relatively small
+In general, a block is a specific level of the nuisance factor
+A complete replicate of the basic experiment is conducted in each block
+A block represents a restriction on randomization
+All runs within a block are randomized
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+5
+
+## Slide 6
+The Hardness Testing Example
+Suppose that we use b = 4 blocks:
+Notice the formed  two-way structure of the experiment
+Once again, we are interested in testing the equality of treatment means, but now we have to remove the variability associated with the nuisance factor (the blocks)
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+6
+
+## Slide 7
+Extension of the ANOVA to the RCBD
+Suppose that there are
+a treatments (factor levels) and b blocks
+A statistical model (effects model) for the RCBD is
+
+The relevant (fixed effects) hypotheses are
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+7
+
+## Slide 8
+Extension of the ANOVA to the RCBD
+ANOVA partitioning of total variability:
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+8
+
+## Slide 9
+More details
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+9
+
+## Slide 10
+Extension of the ANOVA to the RCBD
+The degrees of freedom for the sums of squares in
+are as follows:
+     (   ab -1   =   a -1 +  b -1  + ab –a  -b  +1)
+Therefore, ratios of sums of squares to their degrees  of freedom result in mean squares and the ratio of the mean square for treatments to the error mean square is an F statistic that can be used to test the hypothesis of equal treatment means
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+10
+
+## Slide 11
+ANOVA Display for the RCBD
+Manual computing (ugh!)…see Equations (4-9) – (4-12), page 144
+Use software to analyze the RCBD (Design-Expert, JMP)
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+11
+
+## Slide 12
+Manual computing:
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+12
+
+## Slide 13
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+13
+
+## Slide 14
+Vascular Graft Example (pg. 145)
+To conduct this experiment as a RCBD, assign all 4 pressures to each of the 6 batches of resin
+Each batch of resin is called a “block”; that is, it’s a more homogenous experimental unit on which to test the extrusion pressures
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+14
+
+## Slide 15
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+15
+
+## Slide 16
+Vascular Graft Example
+Design-Expert Output
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+16
+
+## Slide 17
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+17
+
+## Slide 18
+Residual Analysis for the
+Vascular Graft Example
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+18
+
+## Slide 19
+Residual Analysis for the
+Vascular Graft Example
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+19
+
+## Slide 20
+Residual Analysis for the
+Vascular Graft Example
+Basic residual plots indicate that normality, constant variance assumptions are satisfied
+No obvious problems with randomization
+No patterns in the residuals vs. block
+Can also plot residuals versus the pressure (residuals by factor)
+These plots provide more information about the constant variance assumption, possible outliers
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+20
+
+## Slide 21
+Multiple Comparisons for the Vascular Graft Example – Which Pressure is Different?
+Also see Figure 4.2, Design-Expert output
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+21
+
+## Slide 22
+Other Aspects of the RCBD
+See Text, Section 4.1.3, pg. 132
+The RCBD utilizes an additive model – no interaction between treatments and blocks
+Treatments and/or blocks as random effects
+Missing values
+What are the consequences of not blocking if we should have?
+Sample sizing in the RCBD?  The OC curve approach can be used to determine the number of blocks to run..see page 133
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+22
+
+## Slide 23
+Random Blocks and/or Treatments
+
+
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+23
+
+## Slide 24
+
+
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+24
+
+## Slide 25
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+25
+
+## Slide 26
+The Latin Square Design
+Text reference, Section 4.2, pg. 158
+These designs are used to simultaneously control (or   eliminate) two sources of nuisance variability
+A significant assumption is that the three factors (treatments, nuisance factors) do not interact
+If this assumption is violated, the Latin square design will not produce valid results
+Latin squares are not used as much as the RCBD in industrial experimentation
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+26
+
+## Slide 27
+The Rocket Propellant Problem –
+A Latin Square Design
+This is a
+Page 159 shows some other Latin squares
+Table 4-13 (page 162) contains properties of Latin squares
+Statistical analysis?
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+27
+
+## Slide 28
+Statistical Analysis of the
+Latin Square Design
+The statistical (effects) model is
+The statistical analysis (ANOVA) is much like the analysis for the RCBD.
+See the ANOVA table, page 160 (Table 4.10)
+The analysis for the rocket propellant example follows
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+28
+
+## Slide 29
+
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+29
+
+## Slide 30
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+30
+
+## Slide 31
+Other Topics
+Missing values in blocked designs
+RCBD
+Latin square
+Replication of Latin Squares
+Crossover designs
+Graeco-Latin Squares
+Incomplete block designs
+Chapter 4
+Design & Analysis of Experiments 8E 2012 Montgomery
+31

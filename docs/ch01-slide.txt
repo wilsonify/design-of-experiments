@@ -1,0 +1,182 @@
+# Source: ch01.pptx
+# Slides: 17
+
+## Slide 1
+Design and Analysis of Engineering Experiments
+Douglas C. Montgomery
+Regents’ Professor of Industrial Engineering and Statistics
+ASU Foundation Professor of Engineering
+Arizona State University
+Chapter 1
+Design & Analysis of Experiments 8E 2012 Montgomery
+1
+[notes]
+  This is a basic course blah, blah, blah…
+
+## Slide 2
+Design of Engineering Experiments
+Part 1 – Introduction
+Chapter 1, Text
+Why is this trip necessary? Goals of the course
+An abbreviated history of DOX
+Some basic principles and terminology
+The strategy of experimentation
+Guidelines for planning, conducting and analyzing experiments
+Chapter 1
+Design & Analysis of Experiments 8E 2012 Montgomery
+2
+
+## Slide 3
+Introduction to DOX
+An experiment is a test or a series of tests
+Experiments are used widely in the engineering world
+Process characterization & optimization
+Evaluation of material properties
+Product design & development
+Component & system tolerance determination
+“All experiments are designed experiments, some are poorly designed, some are well-designed”
+Chapter 1
+Design & Analysis of Experiments 8E 2012 Montgomery
+3
+
+## Slide 4
+Engineering Experiments
+Reduce time to design/develop new products & processes
+Improve performance of existing processes
+Improve reliability and performance of products
+Achieve product & process robustness
+Evaluation of materials, design alternatives, setting component & system tolerances, etc.
+Chapter 1
+Design & Analysis of Experiments 8E 2012 Montgomery
+4
+
+## Slide 5
+Four Eras in the History of DOX
+The agricultural origins, 1908 – 1940s
+W.S. Gossett and the t-test (1908)
+R. A. Fisher & his co-workers
+Profound impact on agricultural science
+Factorial designs, ANOVA
+The first industrial era, 1951 – late 1970s
+Box & Wilson, response surfaces
+Applications in the chemical & process industries
+The second industrial era, late 1970s – 1990
+Quality improvement initiatives in many companies
+Taguchi and robust parameter design, process robustness
+The modern era, beginning circa 1990
+Chapter 1
+Design & Analysis of Experiments 8E 2012 Montgomery
+5
+
+## Slide 6
+William Sealy Gosset (1876-1937)
+Gosset's interest in barley cultivation led him to speculate that design of experiments should aim, not only at improving the average yield, but also at breeding varieties whose yield was insensitive (robust) to variation in soil and climate.
+Gosset was a friend of both Karl Pearson and R.A. Fisher, an achievement, for each had a monumental ego and a loathing for the other.
+Gosset was a modest man who cut short an admirer with the comment that “Fisher would have discovered it all anyway.”
+Chapter 1
+Design & Analysis of Experiments 8E 2012 Montgomery
+6
+
+## Slide 7
+George E. P. Box
+R. A. Fisher (1890 – 1962)
+Chapter 1
+Design & Analysis of Experiments 8E 2012 Montgomery
+7
+
+## Slide 8
+The Basic Principles of DOX
+Randomization
+Running the trials in an experiment in random order
+Notion of balancing out effects of “lurking” variables
+Replication
+Sample size (improving precision of effect estimation, estimation of error or background noise)
+Replication versus repeat measurements? (see pages 12, 13)
+Blocking
+Dealing with nuisance factors
+Chapter 1
+Design & Analysis of Experiments 8E 2012 Montgomery
+8
+
+## Slide 9
+Strategy of Experimentation
+“Best-guess” experiments
+Used a lot
+More successful than you might suspect, but there are disadvantages…
+One-factor-at-a-time (OFAT) experiments
+Sometimes associated with the “scientific” or “engineering” method
+Devastated by interaction, also very inefficient
+Statistically designed experiments
+Based on Fisher’s factorial concept
+Chapter 1
+Design & Analysis of Experiments 8E 2012 Montgomery
+9
+
+## Slide 10
+Factorial Designs
+In a factorial experiment, all possible combinations of factor levels are tested
+The golf experiment:
+Type of driver
+Type of ball
+Walking vs. riding
+Type of beverage
+Time of round
+Weather
+Type of golf spike
+Etc, etc, etc…
+Chapter 1
+Design & Analysis of Experiments 8E 2012 Montgomery
+10
+
+## Slide 11
+Factorial Design
+Chapter 1
+Design & Analysis of Experiments 8E 2012 Montgomery
+11
+
+## Slide 12
+Chapter 1
+Design & Analysis of Experiments 8E 2012 Montgomery
+12
+
+## Slide 13
+Factorial Designs with Several Factors
+Chapter 1
+Design & Analysis of Experiments 8E 2012 Montgomery
+13
+
+## Slide 14
+Chapter 1
+Design & Analysis of Experiments 8E 2012 Montgomery
+14
+
+## Slide 15
+Factorial Designs with Several Factors
+A Fractional Factorial
+Chapter 1
+Design & Analysis of Experiments 8E 2012 Montgomery
+15
+
+## Slide 16
+Planning, Conducting & Analyzing an Experiment
+Recognition of & statement of problem
+Choice of factors, levels, and ranges
+Selection of the response variable(s)
+Choice of design
+Conducting the experiment
+Statistical analysis
+Drawing conclusions, recommendations
+Chapter 1
+Design & Analysis of Experiments 8E 2012 Montgomery
+16
+
+## Slide 17
+Planning, Conducting & Analyzing an Experiment
+Get statistical thinking involved early
+Your non-statistical knowledge is crucial to success
+Pre-experimental planning (steps 1-3) vital
+Think and experiment sequentially (use the KISS principle)
+See Coleman & Montgomery (1993) Technometrics paper + supplemental text material
+Chapter 1
+Design & Analysis of Experiments 8E 2012 Montgomery
+17

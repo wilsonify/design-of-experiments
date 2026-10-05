@@ -1,0 +1,338 @@
+---
+title: "Stat 5309 Semester Project"
+author: "Tom Wilson"
+date: "May 10th, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(dplyr)
+library(knitr)
+library(agricolae)
+library(rsm)
+library(daewr)
+library(gmodels)
+library(MASS)
+#library(lsmeans)
+library(BsMD)
+library(lme4)
+library(FrF2)
+library(DoE.base)
+library(AlgDesign)
+library(leaps)
+#library(GAD)
+library(chemCal)
+```
+
+
+# 1
+An article in the AT&T Technical Journal (March/April 1986, Vol. 65, pp. 39-50) describes the application of two-level factorial designs to integrated circuit manufacturing. A basic processing step is to grow an epitaxial layer on polished silicon wafers. The wafers mounted on a susceptor are positioned inside a bell jar, and chemical vapors are introduced. The susceptor is rotated and heat is applied until the epitaxial layer is thick enough. An experiment was run using two factors: arsenic flow rate (A) and deposition time (B). Four replicates were run, and the epitaxial layer thickness was measured in  um. The data are shown below:
+
+```{r epitaxialdata}
+flow_rates <- c(0.55,0.59)
+depo_times <- c(10,15)
+epitaxial_data <- expand.grid(flow_rate=flow_rates,
+                              depo_time=rep(depo_times,4))
+epitaxial_data <- cbind(epitaxial_data,
+                        thickness=c(14.037,13.880,14.821,14.888, 
+                                    16.165,13.860,14.757,14.921,
+                                    13.972,14.032,14.843,14.415, 
+                                    13.907,13.914,14.878,14.932))
+epitaxial_data %>% kable(caption = "Predictors of Filament usage")
+```
+
+
+## a
+Estimate the factor effects. 
+Based on a simple first order analysis of variance, the model effects are summarized below.
+
+```{r thicknesseffects}
+epitaxial_model_lm <- lm(formula = thickness~flow_rate*depo_time,
+                       data=epitaxial_data)
+summary(epitaxial_model_lm)
+epitaxial_model <- aov(formula = thickness~flow_rate*depo_time,
+                       data=epitaxial_data)
+epitaxial_effects <- epitaxial_model$coefficients %>% as.data.frame() 
+colnames(epitaxial_effects) <- c("effect")
+epitaxial_effects %>% kable()
+```
+
+## b
+Conduct an analysis of variance. Which factors are important?
+
+```{r}
+summary(epitaxial_model)
+```
+Important factors should have both significant and large effects.
+deposition time is significant at a level of 90% and the effect is large.
+flow rate effect is large, but insignificant.
+
+## c
+Write down a regression equation that could be used to predict epitaxial layer thickness over the region of arsenic flow rate and deposition time used in this experiment.
+
+$$ thickness = 37.627 - 43.119 flow\ rate - 1.148deposition\ time $$
+
+Build a RSM  model (2nd order, 1st order with interaction). Choose one which works. 
+
+```{r}
+thickness_rsm_twi <- rsm( thickness ~ FO(depo_time,flow_rate) + TWI(depo_time,flow_rate) , data=epitaxial_data)
+#summary(thickness_rsm_twi)
+
+thickness_rsm_so <- rsm( thickness ~ SO(depo_time,flow_rate) , data=epitaxial_data)
+#summary(thickness_rsm_so)
+
+```
+
+Perform Daniel plot and Lenth plot.  What is the model ‘s R-square.
+
+both response surface models have an R-squared of 0.19. Quadratic terms were not able to be calculated from this experiment. a Center point is needed to test for inflection.
+
+```{r, message=FALSE}
+DanielPlot(epitaxial_model)
+```
+
+```{r, message=FALSE}
+LenthPlot(epitaxial_model, alpha = 0.05, plt =TRUE, limits = TRUE)
+```
+
+Flow rate has a large effect while depo time has a small effect.
+
+## d
+Analyze the residuals. Are there any residuals that should cause concern?
+
+```{r}
+par(mfrow=c(2,2))
+plot(epitaxial_model)
+```
+There is 1 very serious large outlier and a few less serious small outliers.
+
+Find the cook distance. Take out the outlier(s). Rebuild the rsm model on new data.
+
+```{r}
+is_not_outlier <- cooks.distance(epitaxial_model) < 0.2 
+epitaxial_outlier_removed <- rsm(formula = thickness~FO(flow_rate,depo_time)+TWI(flow_rate,depo_time),
+                                data=epitaxial_data[is_not_outlier,])
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(epitaxial_outlier_removed)
+```
+
+## e
+Discuss how you might deal with the potential outlier found in part (d).
+
+* Analyse the data with and without outliers removed.
+* create an indication of outliers and analyze its effect on thickness.
+* Cross validate
+
+
+## f
+Perform a canonical analysis. Do a contour plot. Any optimal response?
+
+```{r}
+canonical(thickness_rsm_twi)
+```
+
+```{r}
+par(mfrow=c(1,2))
+contour(epitaxial_outlier_removed,~flow_rate+depo_time)
+```
+There is a maximum thickness at depo time = 15.3174956  flow rate = 0.5283659 
+contours are planar, so the design space is not suffcient to find a global extremum.
+I would suggest the next experiment characterize along the gradient of this plane.
+
+# 2
+A nickel-titanium alloy is used to make components for jet turbine aircraft engines.
+Cracking is a potentially serious problem in the final part, because it can lead to nonrecoverable failure. 
+A test is run at the parts producer to determine the effect of four factors on cracks. 
+The four factors are pouring temperature (A), titanium content (B), heat treatment method (C), and amount of grain refiner used (D).
+Two replicates of a  2^4  design are run, and the length of crack in mm  $\times 10^{-2}$  ? induced in a sample coupon subjected to a standard test is measured.
+The data are shown in the following table:
+
+```{r}
+low_high <- c(-1,1)
+cracking_data <- expand.grid(temp=low_high,
+                             content=low_high,
+                             method=low_high,
+                             refiner=rep(low_high,2))
+cracking_data <- cbind(cracking_data,
+                       length=c(7.037,14.707,11.635,17.273,
+                                      10.403,4.368,9.360,14.440,
+                                      8.561,16.867,13.876,19.824,
+                                      11.846,6.125,11.190,15.653,
+                                      6.376,15.219,12.089,17.815,
+                                      10.151,4.098,9.253,12.923,
+                                      8.951,17.052,13.658,19.639,
+                                      12.337,5.904,10.935,15.053))
+cracking_data %>% kable()
+```
+
+
+## a
+Estimate the factor effects, Which factor effects appear to be large?
+Change the factors name (Temp,Content,Method,Refiner,Length). 
+
+```{r}
+cracking_model <- aov(formula=length~temp*content*method*refiner, data=cracking_data)
+cracking_coef <- coef(cracking_model) %>% as.data.frame()
+colnames(cracking_coef) <- c('effect')
+cracking_coef %>% kable()
+```
+
+```{r}
+summary(cracking_model)
+```
+There are significant interactions between pouring temperature, titanium content, and heat treatment method.
+temp, content, method, refiner, temp:content, temp:method are also significant.
+
+```{r}
+LenthPlot(cracking_model, alpha = 0.05, plt =TRUE)
+```
+These 6 coefficients are large:
+content+:method+	-6.126
+temp+:method+	-14.3005
+temp+:content+:method+	12.9935
+temp+	8.2565
+content+	5.1555
+method+	3.5705
+
+## b
+Conduct an analysis of variance. Do any of the factors affect cracking? Use  $\alpha = 0.05$ .
+Perform effects Daniel plot and Lenth plot.
+
+```{r}
+summary(cracking_model)
+```
+
+```{r}
+DanielPlot(cracking_model)
+```
+
+content, method, and the interaction between temp:method, and temp:content:method are the most important effects.
+
+## c
+Write down a regression model that can be used to predict crack length as a function of the significant main effects and interactions you have identified in part (b). Build a  RSM model (2nd order, 1st order with interaction). Choose one which works. 
+
+
+$$ crack\ length = 
+8.2565 pouring\ temperature + 
+5.1555 titanium\ content +
+$$
+$$
+3.5705 heat\ treatment\ method + 
+2.0495 grain\ refiners - 
+$$
+$$
+2.5745 pouring\ temperature \cdot titanium\ content -
+14.3005 pouring\ temperature \cdot heat\ treatment\ method - 
+$$
+$$
+6.1260 titanium\ content \dot heat\ treatment\ method + 
+12.9935 pouring\ temperature \cdot titanium\ content \cdot heat\ treatment\ method
+$$
+
+cannot create rsm without numeric values for high and low settings of each factor.
+
+```{r}
+cracking_rsm <- rsm(formula=length~FO(temp,content,method,refiner) + TWI(temp,content,method,refiner),data=cracking_data) 
+summary(cracking_rsm) 
+```
+
+```{r}
+
+```
+
+## d
+Analyze the residuals from this experiment. Take out outliers, if any.
+
+```{r}
+par(mfrow=c(2,2))
+plot(cracking_model)
+```
+
+The residuals are homoscedastic. No serious outliers.
+
+## e
+Is there an indication that any of the factors affect the variability in cracking?
+
+No
+
+## f
+What recommendations would you make regarding process operations? Use interaction and/or main effect plots to assist in drawing conclusions.
+Perform a canonical analysis on the model. Is there an optimal response?
+Perform contour plot of Temp and Content.
+
+Recommend to focus on temp, content, and method. Leverage the interaction between them. 
+
+
+# 3
+Consider the three-variable central composite design shown below. Analyze the data and draw conclusions, assuming that we wish to maximize conversion (y,) with activity (y:) between 55 and 60.
+
+```{r}
+conversion_data <- ccd(3, n0 = c(4,2), alpha = "rotatable", randomize = FALSE)
+colnames(conversion_data) <- c('run','std.roder','time','temp','catalyst','Block')
+conversion_data <- cbind(conversion_data, 
+                         conversion = c(74.00,51.00,88.00,70.00,
+                                        71.00,90.00,66.00,97.00,
+                                        81.00,75.00,76.00,83.00,
+                                        76.00,79.00,85.00,97.00,
+                                        35.00,81.00,80.00,91.00),
+                         activity = c(53.20,62.90,53.40,62.60,
+                                      57.30,67.90,59.80,67.80,
+                                      59.20,60.40,59.10,60.60,
+                                      59.10,65.90,60.00,60.70,
+                                      57.40,63.20,60.80,38.90))
+conversion_data %>% kable()
+```
+
+## a
+Estimate the factor effects. Which factors appear to be large?
+
+
+## b
+Perform an analysis of variance. Do any factor affects . Use 
+
+## c
+Build a RSM models (choose a model which works). Daniel plot/Lenth plot.
+
+## d
+Perform a residual analysis. Take out any outlyers.
+
+## e
+Perform a canonical analysis. Any optimal response. Do a contour plot of Time-Temperature, Time-Catalyst, Temp-Catalyst.
+
+# 4
+The following data were collected by a chemical engineer. The response y is filtration time,  x_1 ; is temperature, and  x_2 ; is pressure. Fit a second-order model.
+
+```{r}
+filtration_data <- data.frame(x1=c(-1,-1,1,1,-1.414,1.414,0,0,0,0,0,0,0),
+                             x2=c(-1,1,-1,1,0,0,-1.414,1.414,0,0,0,0,0),
+                             y =c(54,45,32,47,50,53,47,51,41,39,44,42,40))
+filtration_data %>% kable()
+```
+
+## a
+What operating conditions would you recommend if the objective is to minimize the filtration time?
+
+```{r}
+filtration_model <- rsm(formula =y~FO(x1,x2)+TWI(x1,x2), data=filtration_data)
+canonical(filtration_model)
+```
+
+There is a minimum at x1=-0.243 and x2=0.328
+
+## b
+What operating conditions would you recommend if the objective is to operate the process at a mean filtration rate very close to 46?
+
+```{r}
+include_graphics('../../../reports/figures/desireability.png')
+```
+
+
+operating at (-0.415, -0.3) is predicted to result in an average of 46.1 and also minimize sensitivity to changes in x1. There is a saddle point in the response surface, so there is potential for instability.
+
+```{r}
+include_graphics('../../../reports/figures/surface.png')
+```

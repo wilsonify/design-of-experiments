@@ -1,0 +1,280 @@
+# Source: ch02.pptx
+# Slides: 34
+
+## Slide 1
+Design of Engineering Experiments
+Chapter 2 – Some Basic Statistical Concepts
+Describing sample data
+Random samples
+Sample mean, variance, standard deviation
+Populations versus samples
+Population mean, variance, standard deviation
+Estimating parameters
+Simple comparative experiments
+The hypothesis testing framework
+The two-sample t-test
+Checking assumptions, validity
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+1
+
+## Slide 2
+Portland Cement Formulation (page 26)
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+2
+
+## Slide 3
+Graphical View of the Data
+Dot Diagram, Fig. 2.1, pp. 26
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+3
+
+## Slide 4
+If you have a large sample, a histogram may be useful
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+4
+
+## Slide 5
+Box Plots, Fig. 2.3, pp. 28
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+5
+
+## Slide 6
+The Hypothesis Testing Framework
+Statistical hypothesis testing is a useful framework for many experimental situations
+Origins of the methodology date from the early 1900s
+We will use a procedure known as the two-sample t-test
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+6
+
+## Slide 7
+The Hypothesis Testing Framework
+Sampling from a normal distribution
+Statistical hypotheses:
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+7
+
+## Slide 8
+Estimation of Parameters
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+8
+
+## Slide 9
+Summary Statistics (pg. 38)
+Unmodified Mortar
+“Original recipe”
+Modified Mortar
+“New recipe”
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+9
+
+## Slide 10
+How the Two-Sample t-Test Works:
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+10
+
+## Slide 11
+If we knew the two variances how would we use Z0 to test H0?
+Suppose that σ1 = σ2 = 0.30. Then we can calculate
+How “unusual” is the value Z0 = -2.09 if the two population means are equal?
+It turns out that 95% of the area under the standard normal curve (probability) falls between the values Z0.025 = 1.96 and - Z0.025 = -1.96.
+So the value Z0 = -2.09 is pretty unusual in that it would happen less that 5% of the time if the population means were equal
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+11
+
+## Slide 12
+Standard Normal Table (see appendix)
+Z0.025 = 1.96
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+12
+
+## Slide 13
+So if the variances were known we would conclude that we should reject the null hypothesis at the 5% level of significance
+and conclude that the alternative hypothesis is true.
+This is called a fixed significance level test, because we compare the value of the test statistic to a critical value (1.96) that we selected in advance before running the experiment.
+The standard normal distribution is the reference distribution for the test.
+Another way to do this that is very popular is to use the P-value approach. The P-value can be thought of as the observed significance level.
+For the Z-test it is easy to find the P-value.
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+13
+
+## Slide 14
+Normal Table
+Find the probability above Z0 = -2.09 from the table.
+This is 1 – 0.98169 = 0.01832
+The P-value is twice this probability, or 0.03662.
+So we would reject the null hypothesis at any level of significance that is less than or equal to 0.03662.
+Typically 0.05 is used as the cutoff.
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+14
+
+## Slide 15
+The t -Test
+The Z-test just described would work perfectly if we knew the two population variances.
+Since we usually don’t know the true population variances, what would happen if we just plugged in the sample variances?
+The answer is that if the sample sizes were large enough (say both n > 30 or 40) the Z-test would work just fine.  It is a good large-sample test for the difference in means.
+But many times that isn’t possible (as Gosset wrote in 1908, “…but what if the sample size is small…?).
+It turns out that if the sample size is small we can no longer use the N(0,1) distribution as the reference distribution for the test.
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+15
+
+## Slide 16
+How the Two-Sample t-Test Works:
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+16
+
+## Slide 17
+How the Two-Sample t-Test Works:
+Values of t0  that are near zero are consistent with the null hypothesis
+Values of  t0 that are very different from zero are consistent with the alternative hypothesis
+t0 is a “distance” measure-how far apart the averages are expressed in standard deviation units
+Notice the interpretation of t0 as a signal-to-noise ratio
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+17
+
+## Slide 18
+The Two-Sample (Pooled) t-Test
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+18
+
+## Slide 19
+William Sealy Gosset (1876, 1937)
+Gosset's interest in barley cultivation led him to speculate that design of experiments should aim, not only at improving the average yield, but also at breeding varieties whose yield was insensitive (robust) to variation in soil and climate.
+Developed the t-test (1908)
+Gosset was a friend of both Karl Pearson and R.A. Fisher, an achievement, for each had a monumental ego and a loathing for the other.
+Gosset was a modest man who cut short an admirer with the comment that “Fisher would have discovered it all anyway.”
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+19
+
+## Slide 20
+The Two-Sample (Pooled) t-Test
+We need an objective basis for deciding how large the test statistic t0  really is
+In 1908, W. S. Gosset derived the reference distribution for t0 … called the t distribution
+Tables of the t distribution – see textbook appendix page 614
+t0 = -2.20
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+20
+
+## Slide 21
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+21
+
+## Slide 22
+The Two-Sample (Pooled) t-Test
+A value of t0 between     –2.101 and 2.101 is consistent with equality of means
+It is possible for the means to be equal and t0 to exceed either 2.101 or –2.101, but it would be a “rare event” … leads to the conclusion that the means are different
+Could also use the   P-value approach
+t0 = -2.20
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+22
+
+## Slide 23
+The Two-Sample (Pooled) t-Test
+t0 = -2.20
+The P-value is the area (probability) in the tails of the t-distribution beyond -2.20 + the probability beyond +2.20 (it’s a two-sided test)
+The P-value is a measure of how unusual the value of the test statistic is given that the null hypothesis is true
+The P-value the risk of wrongly rejecting the null hypothesis of equal means (it measures rareness of the event)
+The exact P-value in our problem is P = 0.042 (found from a computer)
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+23
+
+## Slide 24
+Approximating the P-value
+Our t-table only gives probabilities greater than positive values of t.  So take the absolute value of t0 = -2.20 or |t0|= 2.20.
+Now with 18 degrees of freedom, find the values of t in the table that bracket this value.
+These are 2.101 < |t0|= 2.20 < 2.552.  The right-tail probability for t = 2.101 is 0.025 and for t = 2.552 is 0.01. Double these probabilities because this is a two-sided test.
+Therefore the P-value must lie between these two probabilities, or
+0.05 < P-value < 0.02
+These are upper and lower bounds on the P-value.
+We know that the actual P-value is 0.042.
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+24
+
+## Slide 25
+Computer Two-Sample t-Test Results
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+25
+
+## Slide 26
+Checking Assumptions –
+The Normal Probability Plot
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+26
+
+## Slide 27
+Importance of the t-Test
+Provides an objective framework for simple comparative experiments
+Could be used to test all relevant hypotheses in a two-level factorial design, because all of these hypotheses involve the mean response at one “side” of the cube versus the mean response at the opposite “side” of the cube
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+27
+
+## Slide 28
+Confidence Intervals (See pg. 43)
+Hypothesis testing gives an objective statement concerning the difference in means, but it doesn’t specify “how different” they are
+General form of a confidence interval
+The 100(1-  α)%  confidence interval on the difference in two means:
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+28
+
+## Slide 29
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+29
+
+## Slide 30
+What if the Two Variances are Different?
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+30
+
+## Slide 31
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+31
+
+## Slide 32
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+32
+
+## Slide 33
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+33
+
+## Slide 34
+Other Chapter Topics
+Hypothesis testing when the variances are known
+One sample inference (t and Z tests)
+Hypothesis tests on variances (F tests)
+Paired experiments – this is an example of blocking
+Chapter 2
+Design & Analysis of Experiments 8E 2012 Montgomery
+34

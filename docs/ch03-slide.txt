@@ -1,0 +1,387 @@
+# Source: ch03.pptx
+# Slides: 51
+
+## Slide 1
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+1
+
+## Slide 2
+What If There Are More Than Two Factor Levels?
+The t-test does not directly apply
+There are lots of practical situations where there are either more than two levels of interest, or there are several factors of simultaneous interest
+The analysis of variance (ANOVA) is the appropriate analysis “engine” for these types of experiments
+The ANOVA was developed by Fisher in the early 1920s, and initially applied to agricultural experiments
+Used extensively today for industrial experiments
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+2
+
+## Slide 3
+An Example (See pg. 66)
+An engineer is interested in investigating the relationship between the RF power setting and the etch rate for this tool. The objective of an experiment like this is to model the relationship between etch rate and RF power, and to specify the power setting that will give a desired target etch rate.
+The response variable is etch rate.
+She is interested in a particular gas (C2F6) and gap (0.80 cm), and wants to test four levels of RF power: 160W, 180W, 200W, and 220W. She decided to test five wafers at each level of RF power.
+The experimenter chooses 4 levels of RF power 160W, 180W, 200W, and 220W
+The experiment is replicated 5 times – runs made in random order
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+3
+
+## Slide 4
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+4
+
+## Slide 5
+An Example (See pg. 66)
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+5
+
+## Slide 6
+Does changing the power change the mean etch rate?
+Is there an optimum level for power?
+We would like to have an objective way to answer these questions
+The t-test really doesn’t apply here – more than two factor levels
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+6
+
+## Slide 7
+The Analysis of Variance (Sec. 3.2, pg. 68)
+In general, there will be a levels of the factor, or a treatments, and n replicates of the experiment, run in random order…a completely randomized design (CRD)
+N = an total runs
+We consider the fixed effects case…the random effects case will be discussed later
+Objective is to test hypotheses about the equality of the a treatment means
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+7
+
+## Slide 8
+The Analysis of Variance
+The name “analysis of variance” stems from a partitioning of the total variability in the response variable into components that are consistent with a model for the experiment
+The basic single-factor ANOVA model is
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+8
+
+## Slide 9
+Models for the Data
+There are several ways to write a model for the data:
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+9
+
+## Slide 10
+The Analysis of Variance
+Total variability is measured by the total sum of squares:
+The basic ANOVA partitioning is:
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+10
+
+## Slide 11
+The Analysis of Variance
+A large value of SSTreatments reflects large differences in treatment means
+A small value of SSTreatments  likely indicates no differences in treatment means
+Formal statistical hypotheses are:
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+11
+
+## Slide 12
+The Analysis of Variance
+While sums of squares cannot be directly compared to test the hypothesis of equal means, mean squares can be compared.
+A mean square is a sum of squares divided by its degrees of freedom:
+
+If the treatment means are equal, the treatment and error mean squares will be (theoretically) equal.
+If treatment means differ, the treatment mean square will be larger than the error mean square.
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+12
+
+## Slide 13
+The Analysis of Variance is --Summarized in a Table
+Computing…see text, pp 69
+The reference distribution for F0 is the Fa-1, a(n-1) distribution
+Reject the null hypothesis (equal treatment means) if
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+13
+
+## Slide 14
+
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+14
+
+## Slide 15
+ANOVA Table
+Example 3-1
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+15
+
+## Slide 16
+The Reference Distribution:
+P-value
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+16
+
+## Slide 17
+A little (very little) humor…
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+17
+
+## Slide 18
+ANOVA calculations are usually done via computer
+Text exhibits sample calculations from three very popular software packages, Design-Expert, JMP and Minitab
+See pages 102-105
+Text discusses some of the summary statistics provided by these packages
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+18
+
+## Slide 19
+Model Adequacy Checking in the ANOVA
+Text reference, Section 3.4, pg. 80
+Checking assumptions is important
+Normality
+Constant variance
+Independence
+Have we fit the right model?
+Later we will talk about what to do if some of these assumptions are violated
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+19
+
+## Slide 20
+Model Adequacy Checking in the ANOVA
+Examination of residuals (see text, Sec. 3-4, pg. 80)
+
+Computer software generates the residuals
+Residual plots are very useful
+Normal probability plot of residuals
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+20
+
+## Slide 21
+Other Important Residual Plots
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+21
+
+## Slide 22
+Post-ANOVA Comparison of Means
+The analysis of variance tests the hypothesis of equal treatment means
+Assume that residual analysis is satisfactory
+If that hypothesis is rejected, we don’t know which specific means are different
+Determining which specific means differ following an ANOVA is called the multiple comparisons problem
+There are lots of ways to do this…see text, Section 3.5, pg. 89
+We will use pairwise t-tests on means…sometimes called Fisher’s Least Significant Difference (or Fisher’s LSD) Method
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+22
+
+## Slide 23
+Design-Expert Output
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+23
+
+## Slide 24
+Graphical Comparison of Means
+Text, pg. 91
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+24
+
+## Slide 25
+The Regression Model
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+25
+
+## Slide 26
+Why Does the ANOVA Work?
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+26
+
+## Slide 27
+Sample Size Determination
+Text, Section 3.7, pg. 105
+FAQ in designed experiments
+Answer depends on lots of things; including what type of experiment is being contemplated, how it will be conducted, resources, and desired sensitivity
+Sensitivity refers to the difference in means that the experimenter wishes to detect
+Generally, increasing the number of replications increases the sensitivity or it makes it easier to detect small differences in means
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+27
+
+## Slide 28
+Sample Size Determination
+Fixed Effects Case
+Can choose the sample size to detect a specific difference in means and achieve desired values of type I and type II errors
+Type I error – reject H0 when it is true (    )
+Type II error – fail to reject H0 when it is false (     )
+Power = 1 -
+Operating characteristic curves plot     against a parameter        where
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+28
+
+## Slide 29
+Sample Size Determination
+Fixed Effects Case---use of OC Curves
+The OC curves for the fixed effects model are in the Appendix, Table V
+A very common way to use these charts is to define a difference in two means D of interest, then the minimum value of      is
+Typically work in term of the ratio of            and try values of n until the desired power is achieved
+Most statistics software packages will perform power and sample size calculations – see page 108
+There are some other methods discussed in the text
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+29
+
+## Slide 30
+Power and sample size calculations from Minitab (Page 108)
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+30
+
+## Slide 31
+3.8 Other Examples of Single-Factor Experiments
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+31
+
+## Slide 32
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+32
+
+## Slide 33
+Conclusions?
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+33
+
+## Slide 34
+Chapter 3
+34
+Design & Analysis of Experiments 8E 2012 Montgomery
+
+## Slide 35
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+35
+
+## Slide 36
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+36
+
+## Slide 37
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+37
+
+## Slide 38
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+38
+
+## Slide 39
+3.9  The Random Effects Model
+Text reference, page 118
+There are a large number of possible levels for the factor (theoretically an infinite number)
+The experimenter chooses a of these levels at random
+Inference will be to the entire population of levels
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+39
+
+## Slide 40
+Variance components
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+40
+
+## Slide 41
+Covariance structure:
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+41
+
+## Slide 42
+Observations (a = 3 and n = 2):
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+42
+
+## Slide 43
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+43
+
+## Slide 44
+
+
+ANOVA F-test is identical to the fixed-effects case
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+44
+
+## Slide 45
+Estimating the variance components using the ANOVA method:
+
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+45
+
+## Slide 46
+The ANOVA variance component estimators are moment estimators
+Normality not required
+They are unbiased estimators
+Finding confidence intervals on the variance components is “clumsy”
+Negative estimates can occur – this is “embarrassing”, as variances are always non-negative
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+46
+
+## Slide 47
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+47
+
+## Slide 48
+Confidence interval for the error variance:
+Confidence interval for the interclass correlation:
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+48
+
+## Slide 49
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+49
+
+## Slide 50
+Maximum Likelihood Estimation of the Variance Components
+The likelihood function is just the joint pdf of the sample observations with the observations fixed and the parameters unknown:
+Choose the parameters to maximize the likelihood function
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+50
+
+## Slide 51
+Residual Maximum Likelihood (REML) is used to estimate variance components
+Point estimates from REML agree with the moment estimates for balanced data
+Confidence intervals
+Chapter 3
+Design & Analysis of Experiments 8E 2012 Montgomery
+51

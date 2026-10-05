@@ -1,0 +1,214 @@
+# Source: ch05.pptx
+# Slides: 29
+
+## Slide 1
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+1
+
+## Slide 2
+Design of Engineering Experiments
+– Introduction to Factorials
+Text reference, Chapter 5
+General principles of factorial experiments
+The two-factor factorial with fixed effects
+The ANOVA for factorials
+Extensions to more than two factors
+Quantitative and qualitative factors – response curves and surfaces
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+2
+
+## Slide 3
+Don’t use this:Some Basic Definitions
+Definition of a factor effect: The change in the mean response when the factor is changed from low to high
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+3
+
+## Slide 4
+The Case of Interaction:
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+4
+
+## Slide 5
+Regression Model & The Associated Response Surface
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+5
+
+## Slide 6
+The Effect of Interaction on the Response Surface
+Suppose that we add an interaction term to the model:
+Interaction is actually a form of curvature
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+6
+
+## Slide 7
+Example 5.1 The Battery Life Experiment
+Text reference pg. 187
+A = Material type; B = Temperature (A quantitative variable)
+What effects do material type & temperature have on life?
+2.    Is there a choice of material that would give long life regardless of  temperature (a robust product)?
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+7
+
+## Slide 8
+The General Two-Factor
+Factorial Experiment
+
+Should think
+In 3 dimensions
+a levels of factor A; b levels of factor B; n replicates
+This is a completely randomized design
+
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+8
+
+## Slide 9
+Statistical (effects) model:
+Other models (means model, regression models) can be useful
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+9
+
+## Slide 10
+Extension of the ANOVA to Factorials (Fixed Effects Case) – pg. 189
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+10
+
+## Slide 11
+ANOVA Table – Fixed Effects Case
+JMP and Design-Expert will perform the computations
+Text gives details of manual computing (ugh!) – see pp. 192
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+11
+
+## Slide 12
+ Computation formulas
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+12
+
+## Slide 13
+Design-Expert Output – Example 5.1
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+13
+
+## Slide 14
+JMP output – Example 5.1
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+14
+
+## Slide 15
+Residual Analysis – Example 5.1
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+15
+
+## Slide 16
+Residual Analysis – Example 5.1
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+16
+
+## Slide 17
+Interaction Plot
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+17
+
+## Slide 18
+Quantitative and Qualitative Factors
+The basic ANOVA procedure treats every factor as if it were qualitative
+Sometimes an experiment will involve both quantitative and qualitative factors, such as in Example 5.1
+This can be accounted for in the analysis to produce  regression models for the quantitative factors at each level (or combination of levels) of the qualitative factors
+These response curves and/or response surfaces are often a considerable aid in practical interpretation of the results
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+18
+
+## Slide 19
+Quantitative and Qualitative Factors
+A = Material type
+B = Linear effect of Temperature
+B2 = Quadratic effect of  	Temperature
+AB = Material type – TempLinear
+AB2 = Material type - TempQuad
+B3 = Cubic effect of 	Temperature (Aliased)
+Candidate model terms from Design- Expert:	 Intercept
+A
+B
+B2
+AB
+B3
+AB2
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+19
+
+## Slide 20
+Quantitative and Qualitative Factors
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+20
+
+## Slide 21
+Regression Model Summary of Results
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+21
+
+## Slide 22
+Regression Model Summary of Results
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+22
+
+## Slide 23
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+23
+
+## Slide 24
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+24
+
+## Slide 25
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+25
+
+## Slide 26
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+26
+
+## Slide 27
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+27
+
+## Slide 28
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+28
+
+## Slide 29
+Factorials with More Than
+Two Factors
+Basic procedure is similar to the two-factor case; all abc…kn treatment combinations are run in random order
+ANOVA identity is also similar:
+Complete three-factor example in text, Example 5.5
+Chapter 5
+Design & Analysis of Experiments 8E 2012 Montgomery
+29

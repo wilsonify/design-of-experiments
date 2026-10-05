@@ -4,6 +4,7 @@
 
 # Session Data files
 .RData
+.Ruserdata
 
 # Example code in package build process
 *-Ex.R
@@ -21,7 +22,7 @@
 vignettes/*.html
 vignettes/*.pdf
 
-# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
+# OAuth2 token, see https://github.com/hadley/httr/releases/token
 .httr-oauth
 
 # knitr and R markdown default cache directories
@@ -37,8 +38,19 @@ rsconnect/
 .Rproj.user
 
 .ipynb_checkpoints/
+__pycache__/
 
+# Generated / downloaded artifacts — do not commit
 *.pdf
+*.html
+*.docx
 raw.txt
+Rplots.pdf
+
+# ...except curated course materials and experiment reports
+!docs/course/*.pdf
+!docs/course/*.docx
+!experiments/**/results/*.pdf
+!reports/**/*.pdf
 
 .freebuff/
