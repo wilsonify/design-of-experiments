@@ -125,17 +125,44 @@ for (fig in figures) {
         if (!exists) "figure not written" else "figure is empty")
 }
 
+# The published optima are checked against the brief's own requirements, not
+# against hardcoded numbers: the report reads these files, so a check that simply
+# repeated its constants would prove nothing.
 optimum_path <- "experiments/semester-project/results/desirability_optimum.csv"
+region <- 2^0.5
 if (file.exists(optimum_path)) {
   optimum <- utils::read.csv(optimum_path)
-  # Values quoted in the report; the check fails loudly if the model drifts.
-  expected <- data.frame(x1 = -0.415, x2 = -0.300)
-  close_enough <- all(abs(c(optimum$x1[1], optimum$x2[1]) - c(expected$x1, expected$x2)) < 0.05)
-  check("optimum matches the value quoted in the report", close_enough,
-        paste0("got x1=", optimum$x1[1], " x2=", optimum$x2[1]))
+  check("problem 4: recommended mean is on the target of 46",
+        abs(optimum$yhat[1] - 46) < 0.05,
+        paste("yhat =", optimum$yhat[1]))
+  check("problem 4: operating point is inside the design region",
+        all(abs(c(optimum$x1[1], optimum$x2[1])) <= region + 1e-6),
+        paste0("x1=", optimum$x1[1], " x2=", optimum$x2[1], " region=", round(region, 4)))
+  # dy/dx1 = b1 + b12 * x2 is 6.0 in coded units at x2 = 0 for the fitted FO+TWI
+  # surface, so this asserts a real reduction in sensitivity, not a self-check.
+  check("problem 4: sensitivity to x1 is reduced relative to x2 = 0",
+        abs(optimum$slope_x1[1]) < 6.0,
+        paste("|dy/dx1| =", optimum$slope_x1[1]))
 } else {
   check("desirability.R writes results/desirability_optimum.csv", FALSE,
         paste("missing", optimum_path))
+}
+
+conversion_path <- "experiments/semester-project/results/conversion_optimum.csv"
+if (file.exists(conversion_path)) {
+  optimum3 <- utils::read.csv(conversion_path)
+  check("problem 3: activity respects the 55-60 constraint",
+        optimum3$activity >= 55 && optimum3$activity <= 60,
+        paste("activity =", optimum3$activity))
+  check("problem 3: operating point is inside the design region",
+        all(abs(c(optimum3$time, optimum3$temp, optimum3$catalyst)) <= 1.682 + 1e-6),
+        paste("point =", optimum3$time, optimum3$temp, optimum3$catalyst))
+  check("problem 3: conversion is not worse than the best observed run",
+        optimum3$conversion >= 90,
+        paste("conversion =", optimum3$conversion))
+} else {
+  check("desirability.R writes results/conversion_optimum.csv", FALSE,
+        paste("missing", conversion_path))
 }
 
 cat("\n----------------------------------------\n")

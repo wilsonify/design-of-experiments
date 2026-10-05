@@ -27,12 +27,19 @@ directory (`scripts/` → `../../../reports/figures/`), so the render is
 working-directory independent, and it resolves its data through
 `src/utils/paths.R`. Packages: `renv::restore()` from the repository root.
 
-## Known limitation
+## Known limitations
 
-The PDF in `results/` is a rendered snapshot. R Markdown rendering is
-deterministic given the same package versions, but the PDF byte stream can
-differ across pandoc/LaTeX versions; the Rmd and `desirability.R` are the
-sources of truth, and `make check` verifies the figures regenerate.
+* **The committed PDF is the 2019 render.** It predates the corrections to the
+  Rmd (Problem 3 is now answered, data is read from `data/raw/` instead of being
+  inlined, the cracking equation is generated rather than typed, and the
+  filtration operating point is computed by `desirability.R`). Re-render with
+  `make report` to bring the PDF back in line; until then the Rmd is the source
+  of truth and the PDF is a historical artifact.
+* R Markdown rendering is deterministic given the same package versions, but the
+  PDF byte stream can differ across pandoc/LaTeX versions.
+* `desirability.R`, `checks.R` and the render have not been executed on the
+  machine where this restructuring was done (no R installed); CI runs them. See
+  `tests/README.md` for what each check proves.
 
 ## Layout contract
 

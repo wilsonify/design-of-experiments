@@ -103,7 +103,9 @@ examples and the design unit cannot drift apart. Full charter:
 * `reports/figures/` — the desirability/surface figures are **generated** by
   `experiments/semester-project/scripts/desirability.R`; the remaining figures
   are committed snapshots.
-* `experiments/semester-project/results/` — rendered PDF report.
+* `experiments/semester-project/results/` — the rendered PDF report (currently
+  the 2019 render; see the experiment README) plus `desirability_optimum.csv`
+  and `conversion_optimum.csv`, the two optima the report quotes.
 * `archive/course/deliverables/` — curated lab/exam deliverables (PDF/DOCX),
   explicitly un-ignored in `.gitignore`.
 * `reference/` — the books and extracted `raw.txt` are ignored (third-party,
