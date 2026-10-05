@@ -7,7 +7,7 @@ modl <- lm( pl ~ Subject + Period + Treat, data = antifungal,
 Anova(modl, type = "III" )
 
 # Example 2 p. 354
-library(lsmeans)
+library(emmeans)
 lsmeans(modl, pairwise ~ Treat)
 
 # Example 3 p. 355
@@ -43,7 +43,7 @@ modc <- lm( y ~ Subject + Period + Treat + Carry, data =
 Anova(modc, type = "III", singular.ok = TRUE)
 
 # Example 7 p. 361
-library(lsmeans)
+library(emmeans)
 lsmeans(modc, ~ Treat)
 
 # Example 8 p. 362

@@ -8,22 +8,32 @@
 #
 # Usage:  source("src/utils/plotting.R")
 
-# 1. Residual diagnostics panel: fitted-vs-residual, scale-location,
-#    normal Q-Q, and residuals-vs-experimental-unit (if supplied).
-#    Reproduces the par(mfrow = c(2, 2)); plot(mod, which = ...) idiom.
+# 1. Residual diagnostics panel. Four panels, always:
+#      which = 1  residuals vs fitted
+#      which = 2  normal Q-Q
+#      which = 3  scale-location        (NOT which = 5, which is leverage)
+#      residuals vs experimental unit, or vs observation order if the design
+#      labels are not supplied.
 residual_panel <- function(model, data = NULL, unit = NULL) {
   op <- graphics::par(mfrow = c(2, 2))
   on.exit(graphics::par(op))
   stats::plot(model, which = 1)
   stats::plot(model, which = 2)
-  stats::plot(model, which = 5)
+  stats::plot(model, which = 3)
+
+  r <- stats::residuals(model)
   if (!is.null(data) && !is.null(unit)) {
-    r <- stats::residuals(model)
-    graphics::plot(r ~ data[[unit]],
-             main = "Residuals vs Exp. Unit", font.main = 1,
-             xlab = unit, ylab = "Residuals")
-    graphics::abline(h = 0, lty = 2)
+    x <- data[[unit]]
+    main <- "Residuals vs Exp. Unit"
+    xlab <- unit
+  } else {
+    x <- seq_along(r)
+    main <- "Residuals vs Order"
+    xlab <- "Observation order"
   }
+  graphics::plot(x, r, main = main, font.main = 1, xlab = xlab, ylab = "Residuals")
+  graphics::abline(h = 0, lty = 2)
+
   invisible(model)
 }
 

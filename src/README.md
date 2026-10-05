@@ -7,7 +7,7 @@ the course week it was written in. Retired 2019 coursework lives in
 | Unit | Files | What it is | How to run |
 |------|-------|-----------|------------|
 | [`design/`](design/) | 1 | **Deployable unit.** Regenerates every randomisation plan in the repo, deterministically. | `Rscript src/design/generate_plans.R` |
-| [`examples/`](examples/) | 12 | Book/chapter worked examples (`Chapter2.R` … `Chapter13.R`) — one script per chapter. Faithful transcriptions of the book's code, kept unrefactored so the printed output can be compared side by side; they call the generators in `design/` rather than re-deriving the plans. | `Rscript src/examples/Chapter2.R` (from repo root) |
+| [`examples/`](examples/) | 12 | Book/chapter worked examples (`Chapter2.R` … `Chapter13.R`) — one script per chapter. Transcriptions of the book's code, kept close to the printed listing so output can be compared side by side. Two deliberate deviations: the plan-deriving lines call `design/` instead of re-randomising, and `library(lsmeans)` is `library(emmeans)` (which supersedes `lsmeans` and still exports `lsmeans()`). | `Rscript src/examples/Chapter2.R` (from repo root) |
 | [`utils/`](utils/) | 4 | Shared libraries, `source()`d by the units above and by `experiments/`. | `source("src/utils/paths.R")` |
 
 ## utils/ — the cross-cutting concerns

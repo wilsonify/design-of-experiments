@@ -91,7 +91,7 @@ interaction.plot(as.numeric(Cp$A), Cp$B, Cp$ys, type = "l", legend = FALSE, ylim
 
 # Example 10 p. 322
 options(digits = 5 )
-library(lsmeans)
+library(emmeans)
 require(pbkrtest)
 require(lme4)
 lsmeans(rmod2, ~ A)

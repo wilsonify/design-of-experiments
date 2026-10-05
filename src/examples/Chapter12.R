@@ -173,7 +173,7 @@ rmod <- lm(Pof ~ A + B + C + D + E + F + G + A:G + D:E + D:F,
 Anova(rmod, type="III")
 
 # Example 13 p. 530
-library(lsmeans)
+library(emmeans)
 lsmeans(rmod, ~ C)
 
 # Figure 12.12 p. 530
@@ -218,11 +218,11 @@ rmod <- lm(torque ~ A + B + C + D + E + A:B + A:C + A:D + A:E,
 Anova(rmod, type="III")
 
 # Example 15 p. 534
-library(lsmeans)
+library(emmeans)
 lsmeans(rmod, ~ C)
 
 # Example 16 p. 535
-library(lsmeans)
+library(emmeans)
 lsmeans(rmod, ~ A:B)
 
 # Figure 12.14  p. 535

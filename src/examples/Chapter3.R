@@ -5,12 +5,14 @@ D
 # Example 2 p. 60
 D <- rbind(D, D)
 
-# Example 3 p. 61
-set.seed(2591)
-D <- D[order(sample(1:18)), ]
-CopterDes <- D[ c( "BW", "WL" )]
+# Example 3 p. 61 — the run order comes from the design unit (seed 2591), not
+# from re-randomising here. Run from the repository root.
+source("src/utils/paths.R")
+source("src/design/generate_plans.R")
+
+CopterDes <- make_copter_design()
 CopterDes
-write.csv(CopterDes, file = "data/interim/CopterDes.csv", row.names = FALSE)
+write_plan( CopterDes, "CopterDes.csv" )
 
 # Example 4 p. 65
 library(daewr)
@@ -82,7 +84,7 @@ p <- cbind( yhat = predict( mod2, p), p)
 with(p, tapply(yhat, Ratio, mean) )
 
 # Example 15 p. 75
-library(lsmeans)
+library(emmeans)
 lsmeans(mod2,~ Eth)
 
 # Example 16 p. 75

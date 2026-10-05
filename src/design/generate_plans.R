@@ -22,6 +22,10 @@
 source("src/utils/paths.R")
 source("src/utils/design_helpers.R")
 
+# NOTE: this file defines the design functions; it only *runs* them when it is
+# the top-level script. The chapter examples source() it to reuse the same
+# generators instead of re-deriving a plan of their own.
+
 # --- Plan.csv: completely randomised design (bread bake time) -----------
 
 make_bread_plan <- function(seed = 7638) {
@@ -73,6 +77,6 @@ main <- function() {
   invisible(plans)
 }
 
-if (identical(environment(), globalenv())) {
+if (sys.nframe() == 0L) {
   main()
 }

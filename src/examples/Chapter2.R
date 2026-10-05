@@ -1,17 +1,20 @@
-# Example 1 p. 18
-set.seed(7638)
-f <- factor( rep ( c(35, 40, 45 ), each = 4))
-fac <- sample ( f, 12 )
-eu <- 1:12
-plan <- data.frame ( loaf = eu, time = fac )
-# Run from the repository root (or source src/utils/paths.R) so the plan
-# lands in data/interim/ instead of whatever the working directory is.
-write.csv( plan, file = "data/interim/Plan.csv", row.names = FALSE )
+# Example 1 p. 18 — the randomisation is taken from the design unit
+# (`src/design/generate_plans.R`, seed 7638) instead of being re-derived here,
+# so this example and `Rscript src/design/generate_plans.R` cannot disagree.
+# Run from the repository root.
+source("src/utils/paths.R")
+source("src/design/generate_plans.R")
+
+plan <- make_bread_plan()
+write_plan( plan, "Plan.csv" )
 
 # Example 2 p. 23
-bread <- read.csv("data/interim/Plan.csv")
+bread <- read.csv( interim_path("Plan.csv") )
 
 # Example 3 p. 24
+# The plan carries no response, so the book hands `bread` over to the data set
+# shipped in daewr (Lawson's Table 2.1). rm() is what performs the switch:
+# after it, `bread` resolves to the package data set, not the plan just read.
 rm(bread)
 library(daewr)
 mod0 <-lm( height ~ time, data = bread )

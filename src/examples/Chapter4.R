@@ -1,17 +1,13 @@
-# Example 1 p. 115
-f <- factor( c(1,2,3,4) )
-b1t <- sample(f,4)
-b2t <- sample(f,4)
-b3t <- sample(f,4)
-b4t <- sample(f,4)
-t <- c(b1t, b2t, b3t, b4t)
-block <- factor( rep(c("carnation", "daisy", "rose", "tulip"),
-                     each=4))
-flnum <- rep(f,4)
-plan<-data.frame(TypeFlower = block, FlowerNumber = flnum,
-                 treatment = t)
-write.table(plan, file = "data/interim/RCBPlan.csv", sep = ",", row.names
-            = FALSE)
+# Example 1 p. 115 — the book's listing randomises unseeded, so it produced a
+# different plan on every run. The design unit pins the same design to seed 101
+# and writes it with write.csv, so the artifact is stable. Run from the repo
+# root.
+source("src/utils/paths.R")
+source("src/design/generate_plans.R")
+
+plan <- make_rcb_plan()
+plan
+write_plan( plan, "RCBPlan.csv" )
 
 # Example 2 p. 115
 library(agricolae)

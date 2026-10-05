@@ -21,13 +21,13 @@ mod1 <- aov( score ~ panelist + recipe, data = taste)
 summary(mod1)
 
 # Example 5 p. 266
-library(lsmeans)
+library(emmeans)
 lsmeans(mod1, pairwise ~ recipe, adjust = ("tukey"))
 
 # Example 6 p. 268
 library(daewr)
 modm <- aov( pressure ~ Block + Treatment, data = BPmonitor)
-library(lsmeans)
+library(emmeans)
 lsmeans(modm,pairwise~Treatment,adjust=("tukey"))
 
 # Example 7 p. 270
@@ -223,7 +223,7 @@ modf <- lm(rating ~ Block + A + B + A:B, data = apple,
 Anova(modf,type="III")
 
 # Example 39 p. 299
-library(lsmeans)
+library(emmeans)
 lsmeans(modf, pairwise ~ A, adjust = ("tukey"))
 
 

@@ -147,7 +147,7 @@ mod5 <- lmer( residue ~ 1 + form + tech + form:tech + (1|plot:form:tech),
 summary(mod5)
 
 # Example 24 p. 178
-library(lsmeans)
+library(emmeans)
 lsmeans(mod5, pairwise ~ tech, adjust = c("tukey"))
 
 # Example 25 p. 179
