@@ -10,8 +10,7 @@ refactored.
 | `deliverables/` | 30 | rendered PDF/DOCX lab, homework, exam and report deliverables |
 | `extracted/` | 16 | extracted text (`raw.txt`) of the deliverables, some with a generated `summary.md` |
 
-The `.R` session scripts were written interactively and still contain bare
-`install.packages()` calls (31), bare `library()` calls (365) and
-`file.choose()` prompts (15). That is why they are archived rather than
-refactored into `src/utils/`: their value is as a record of the sessions, not as
-a library.
+The `.R` session scripts were written interactively and still contain 23 bare
+`install.packages()` calls, 124 bare `library()` calls and 15 `file.choose()`
+prompts. That is why they are archived rather than refactored into `src/utils/`:
+their value is as a record of the sessions, not as a library.

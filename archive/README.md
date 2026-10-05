@@ -4,10 +4,12 @@ Everything here is a graded 2019 STAT 5309 / 5039 artifact, kept for
 provenance. Nothing in `archive/` is executed, tested, or part of the living
 project's build.
 
-The code is deliberately **not** refactored. It still reflects the interactive
-session style it was written in — bare `library()` calls (365 of them),
-`install.packages()` side effects (31), and `file.choose()` prompts (15). Its
-skipped `*.Rmd` counterparts are the render sources for the deliverables.
+The code is deliberately **not** refactored. `archive/course/code/` still
+reflects the interactive session style it was written in: 124 bare `library()`
+calls, 23 `install.packages()` side effects, and 15 `file.choose()` prompts.
+That is why it is archived rather than migrated onto `src/utils/`. The `*.Rmd`
+documents are the render sources for the deliverables in
+`course/deliverables/`.
 
 | Path | Contents | Where it came from |
 |------|----------|--------------------|
