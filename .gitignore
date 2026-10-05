@@ -40,6 +40,12 @@ rsconnect/
 .ipynb_checkpoints/
 __pycache__/
 
+# renv: the lockfile is tracked, the project-local library is not
+renv/library/
+renv/staging/
+renv/local/
+renv/cache/
+
 # Generated / downloaded artifacts — do not commit
 *.pdf
 *.html

@@ -1,0 +1,46 @@
+Package: doe
+Title: Design and Analysis of Experiments
+Version: 0.1.0
+Authors@R: person("Thomas", "Wilson", role = c("aut", "cre"))
+Description: Reproducible design and analysis of experiments: generated
+    randomisation plans, the Lawson chapter examples, and a multi-response
+    desirability experiment. This is a workbook repository rather than an
+    installed package; DESCRIPTION exists so that renv, CI and
+    src/utils/dependencies.R read one dependency manifest instead of three
+    copies.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Depends:
+    R (>= 4.0)
+Imports:
+    AlgDesign,
+    BsMD,
+    DoE.base,
+    FrF2,
+    MASS,
+    Vdgraph,
+    agricolae,
+    car,
+    chemCal,
+    crossdes,
+    daewr,
+    desirability,
+    dplyr,
+    emmeans,
+    GAD,
+    gmodels,
+    knitr,
+    lattice,
+    leaps,
+    lme4,
+    mixexp,
+    multcomp,
+    nlme,
+    rsm
+Suggests:
+    faraway,
+    ggplot2,
+    lmtest,
+    lsmeans,
+    rmarkdown,
+    scatterplot3d

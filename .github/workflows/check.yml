@@ -1,0 +1,61 @@
+name: check
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  checks:
+    name: checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      # Reads DESCRIPTION: Imports are installed for the checks to run.
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          dependencies: '"hard"'
+          extra-packages: any::renv
+
+      - name: Restore the pinned set if a lockfile is committed
+        run: |
+          if [ -f renv.lock ]; then
+            Rscript -e "renv::restore(prompt = FALSE)"
+          else
+            echo "::warning::renv.lock is not committed; dependencies are resolved from DESCRIPTION, not pinned. Run 'make lock' and commit renv.lock."
+          fi
+
+      - name: Run the repository checks
+        run: make check
+
+  report:
+    name: report renders
+    runs-on: ubuntu-latest
+    # Separate job: rendering needs pandoc + LaTeX, which the checks do not.
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          dependencies: '"hard"'
+
+      - uses: r-lib/actions/setup-tinytex@v2
+
+      - name: Render the semester-project report
+        run: make report
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: semester-project-report
+          path: experiments/semester-project/results/semester_project_twilson.pdf

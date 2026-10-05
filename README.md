@@ -39,11 +39,13 @@ unit, and neither participates in the build.
 
 ## Quick start
 
-Requirements: R (≥ 4.0) and the packages pinned in `renv.lock`. Restore them
-once:
+Requirements: R (≥ 4.0), plus `make` and pandoc/LaTeX for `make report`.
+Dependencies are declared once in `DESCRIPTION`. If a pinned `renv.lock` is
+present, restore it:
 
 ```sh
-Rscript -e "renv::restore()"
+Rscript -e "renv::restore()"                # if renv.lock exists
+Rscript -e "renv::init(bare = TRUE); renv::snapshot(prompt = FALSE)"   # make lock
 ```
 
 ```sh
@@ -58,12 +60,27 @@ Rscript experiments/semester-project/scripts/desirability.R
 Rscript -e "rmarkdown::render('experiments/semester-project/scripts/semester_project_twilson.Rmd')"
 
 # 4. run every check (plan stability, script parsing, figure regeneration)
-make check
+Rscript tests/checks.R        # or: make check
 ```
 
 All commands run from the repository root. `src/utils/paths.R` resolves data and
 figure locations from the root, so `data/interim/` and `reports/figures/` are
 written regardless of the caller's working directory.
+
+## Dependencies and checks
+
+* `DESCRIPTION` is the single dependency manifest; `src/utils/dependencies.R`,
+  `renv` and CI all read it, so there is no hand-maintained package list to
+  drift. `load_doe_packages()` does **not** attach packages by default —
+  attaching `MASS`, `dplyr`, `car` and `lattice` together masks `select()`,
+  `filter()` and `lag()`.
+* `make lock` writes a pinned `renv.lock`. That file is not committed yet (it
+  can only be produced by a machine with R installed); CI emits a warning
+  until it is, and resolves packages from `DESCRIPTION` in the meantime.
+* [`tests/checks.R`](tests/README.md) verifies the plans are byte-stable across
+  runs, that the chapter examples agree with the generator, and that the
+  experiment regenerates its figures and optimum. `.github/workflows/check.yml`
+  runs it, plus a separate job that renders the report.
 
 ## Reproducing the generated plans
 
