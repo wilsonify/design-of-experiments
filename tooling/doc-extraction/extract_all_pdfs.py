@@ -14,8 +14,10 @@ import sys
 import io
 import traceback
 
-# Resolve docs/ relative to this script so the tooling is portable.
-DOCS_DIR = os.path.dirname(os.path.abspath(__file__))
+# Resolve the reference tree relative to the repository root, not this script,
+# so moving the tooling does not silently change what it scans or writes.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from doe_paths import BOOKS_DIR, REFERENCE_DIR  # noqa: E402
 
 # ---- Helper: sanitize PDF filename to directory name ----
 def pdf_to_dirname(filename):
@@ -154,14 +156,14 @@ def extract_pdf_text(filepath):
     raise RuntimeError("No PDF library available (need pymupdf or pypdf)")
 
 def main():
-    # Find all PDFs
+    # Find all PDFs under reference/books/ (the reference tree's source files).
     pdf_files = []
-    for root, dirs, files in os.walk(DOCS_DIR):
+    for root, dirs, files in os.walk(BOOKS_DIR):
         for f in files:
             if f.lower().endswith(".pdf"):
                 pdf_files.append(os.path.join(root, f))
 
-    print(f"Found {len(pdf_files)} PDF files\n")
+    print(f"Found {len(pdf_files)} PDF files in {BOOKS_DIR}\n")
 
     # Sort for consistent output
     pdf_files.sort()
@@ -174,12 +176,14 @@ def main():
         filename = os.path.basename(pdf_path)
         dirname = pdf_to_dirname(filename)
 
-        # Determine output directory
-        # If the PDF is in docs root, create docs/<dirname>/
-        # If it's in a subdirectory, keep structure relative to docs
+        # Determine output directory: extracted text lands beside the
+        # reference material (reference/<dirname>/), never inside books/.
         rel_dir = os.path.dirname(pdf_path)
-        if rel_dir == DOCS_DIR or rel_dir == ".":
-            out_dir = os.path.join(DOCS_DIR, dirname)
+        if os.path.abspath(rel_dir) in (
+            os.path.abspath(REFERENCE_DIR),
+            os.path.abspath(BOOKS_DIR),
+        ):
+            out_dir = os.path.join(REFERENCE_DIR, dirname)
         else:
             # Keep relative subdirectory structure
             out_dir = os.path.join(rel_dir, dirname)
@@ -197,7 +201,7 @@ def main():
         # Check if it's the main John Lawson book (chapters already extracted)
         if "Design and Analysis of Experiments With R - John Lawson.pdf" == filename:
             # Check if chapter subdirs already exist
-            if os.path.exists(os.path.join(DOCS_DIR, "John Lawson - Design and Analysis of Experiments With R", "C01-Introduction", "raw.txt")):
+            if os.path.exists(os.path.join(REFERENCE_DIR, "John Lawson - Design and Analysis of Experiments With R", "C01-Introduction", "raw.txt")):
                 print(f"  SKIP (chapters already extracted): {filename}")
                 skipped_count += 1
                 continue

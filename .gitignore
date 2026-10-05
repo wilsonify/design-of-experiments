@@ -48,8 +48,8 @@ raw.txt
 Rplots.pdf
 
 # ...except curated course materials and experiment reports
-!docs/course/*.pdf
-!docs/course/*.docx
+!archive/course/deliverables/*.pdf
+!archive/course/deliverables/*.docx
 !experiments/**/results/*.pdf
 !reports/**/*.pdf
 

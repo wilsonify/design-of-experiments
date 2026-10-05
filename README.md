@@ -4,18 +4,17 @@ Examples of statistical design and analysis of experiments, primarily in R,
 adapted from Lawson's *Design and Analysis of Experiments With R* and a
 STAT 5309/5039 course. Knowledge of basic statistics is required.
 
-Structured after the Microsoft Team Data Science Process, adapted for design
-of experiments: code, data, experiments, and reporting are separated, every
-generated artifact is reproducible from a seeded script, and raw inputs are
-never edited.
+The repository is organised as a living project plus an archive: code, data,
+experiments and reporting are separated; generated artifacts are reproducible
+from seeded scripts; raw inputs are never edited; and the 2019 coursework is
+kept for provenance without being mixed into the working tree.
 
 ## Repository layout
 
 ```
-src/            code — see src/README.md
+src/            living code — see src/README.md
   design/       deployable unit: regenerates all randomisation plans
-  examples/     Chapter2.R … Chapter13.R book examples
-  course/       STAT 5309 labs, homework, exams, dated class scripts (archival)
+  examples/     Chapter2.R … Chapter13.R book examples (faithful transcriptions)
   utils/        shared helpers: paths, dependencies, plotting, design helpers
 data/
   raw/          source datasets as received (never edited)
@@ -26,34 +25,45 @@ experiments/    one directory per experiment (scripts/ + results/)
 reports/
   figures/      figures shared across experiments and documents
 notebooks/      exploratory notebooks (not authoritative)
-docs/           reference books + extracted text/summaries, course materials,
-                PDF/docx deliverables (docs/course/), tooling, project charter
+docs/           the living project's charter — docs/project/experiment-plan.md
+reference/      study material: textbooks, slides, extracted text, summaries
+archive/        retired 2019 course code and deliverables (not built, not tested)
+tooling/        doc-extraction scripts that maintain reference/
 ```
 
 Rule of thumb: **raw is sacred, interim is disposable, results are committed.**
 
+`reference/` and `archive/` are deliberately separate from `src/`: one is
+read-only study material, the other is retired coursework. Neither is a code
+unit, and neither participates in the build.
+
 ## Quick start
 
-Requirements: R (≥ 4.0) with the packages the scripts use.
+Requirements: R (≥ 4.0) and the packages pinned in `renv.lock`. Restore them
+once:
 
 ```sh
-# 1. install/attach every package the repo needs (29 declared)
-Rscript -e "source('src/utils/dependencies.R'); load_doe_packages(install = TRUE)"
-
-# 2. regenerate all three design plans deterministically
-Rscript src/design/generate_plans.R
-
-# 3. run a chapter example
-Rscript src/examples/Chapter2.R
-
-# 4. render the semester-project report
-Rscript -e "rmarkdown::render('experiments/semester-project/scripts/semester_project_twilson.Rmd')"
+Rscript -e "renv::restore()"
 ```
 
-All commands run from the repository root. Path helpers in
-`src/utils/paths.R` resolve data and figure locations from the repo root, so
-outputs land in `data/interim/` and `reports/figures/` regardless of the
-caller's working directory.
+```sh
+# 1. regenerate all three design plans deterministically
+Rscript src/design/generate_plans.R
+
+# 2. run a chapter example
+Rscript src/examples/Chapter2.R
+
+# 3. reproduce the semester-project analysis and render its report
+Rscript experiments/semester-project/scripts/desirability.R
+Rscript -e "rmarkdown::render('experiments/semester-project/scripts/semester_project_twilson.Rmd')"
+
+# 4. run every check (plan stability, script parsing, figure regeneration)
+make check
+```
+
+All commands run from the repository root. `src/utils/paths.R` resolves data and
+figure locations from the root, so `data/interim/` and `reports/figures/` are
+written regardless of the caller's working directory.
 
 ## Reproducing the generated plans
 
@@ -63,38 +73,41 @@ caller's working directory.
 | `data/interim/CopterDes.csv` | 2591 | `src/design/generate_plans.R` |
 | `data/interim/RCBPlan.csv` | 101 (book example unseeded; seed chosen for reproducibility) | `src/design/generate_plans.R` |
 
-Chapter examples `Chapter2.R`–`Chapter4.R` read and write the same paths, so
-script and unit produce identical artifacts. Full charter:
+`src/examples/Chapter2.R`–`Chapter4.R` call the same generators, so the
+examples and the design unit cannot drift apart. Full charter:
 [`docs/project/experiment-plan.md`](docs/project/experiment-plan.md).
 
 ## Data and results
 
 * `data/raw/` — 7 CSV datasets + 2 Excel book datasets (byte-identical to the
   originals formerly in `labs/`; git rename detection preserves history).
-* `data/external/` — 7 JMP files (formerly `labs/*.jmp`).
-* `reports/figures/` — 8 figures, including the two desirability/surface PNGs
-  consumed by the semester-project report (committed inputs, not regenerable
-  from the Rmd).
+* `data/external/` — 7 JMP files (formerly `labs/*.jmp`), byte-identical twins
+  of the CSVs in `data/raw/`.
+* `reports/figures/` — the desirability/surface figures are **generated** by
+  `experiments/semester-project/scripts/desirability.R`; the remaining figures
+  are committed snapshots.
 * `experiments/semester-project/results/` — rendered PDF report.
-* `docs/course/` — curated lab/exam deliverables (PDF/DOCX), explicitly
-  un-ignored in `.gitignore`; everything else under `*.pdf` (reference books,
-  extraction byproducts like `raw.txt`) stays ignored.
+* `archive/course/deliverables/` — curated lab/exam deliverables (PDF/DOCX),
+  explicitly un-ignored in `.gitignore`.
+* `reference/` — the books and extracted `raw.txt` are ignored (third-party,
+  ~35 MB); the regex-generated `summary.md` files are tracked. See
+  [`reference/README.md`](reference/README.md).
 
 ## Provenance map (before → after)
 
 | Before | After |
 |--------|-------|
-| `R code/Chapter2.R` … `Chapter13.R` | `src/examples/` |
-| `R code/FTCCode.R`, `R codes.R`, date-named scripts | `src/course/` (date scripts renamed `session_YYYY-MM-DD.R`) |
+| `R code/Chapter2.R` … `Chapter13.R` | `src/examples/` (two syntax typos fixed: `library(mixexp}`, `library{daewr}`) |
+| `R code/FTCCode.R`, `R codes.R`, date-named scripts | `archive/course/code/` (date scripts renamed `session_YYYY-MM-DD.R`) |
 | `R code/DOE.ipynb` | `notebooks/exploratory/DOE.ipynb` |
 | `R code/Plan.csv` | `data/interim/Plan.csv` (now regenerable) |
-| `labs/*.csv` | `data/raw/` |
+| `labs/*.csv` | `data/raw/` (deleted duplicate copies) |
 | `labs/*.jmp` | `data/external/` |
-| `labs/*.Rmd` | `src/course/` |
-| `labs/*.pdf`, `labs/*.docx` (deliverables) | `docs/course/` |
-| `labs/desireability.png`, `labs/surface.png` | `reports/figures/` |
+| `labs/*.Rmd` | `archive/course/code/` |
+| `labs/*.pdf`, `labs/*.docx` (deliverables) | `archive/course/deliverables/` |
+| `labs/desireability.png`, `labs/surface.png` | `reports/figures/` (now regenerated by a seeded script) |
 | semester-project Rmd (in `labs/`) | `experiments/semester-project/scripts/` |
-| `tesseractocrstuff.ipynb` | `docs/tesseractocrstuff.ipynb` |
-
-Reference documents used for study (Lawson, Everitt, OEHLERT, formula sheets)
-remain under `docs/`.
+| `tesseractocrstuff.ipynb` | `tooling/doc-extraction/` |
+| `docs/*.pdf`, `docs/*/` (books, extracted text) | `reference/` |
+| `docs/course/*` | `archive/course/deliverables/` |
+| `docs/*.py` | `tooling/doc-extraction/` |

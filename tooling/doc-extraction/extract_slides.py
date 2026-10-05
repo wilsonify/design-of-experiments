@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Extract text from all PPTX files in docs/slides/ and generate organized raw text + summaries.
+Extract text from all PPTX files in reference/slides/ and generate organized raw text + summaries.
 
 For each PPTX:
-  - Creates docs/slides/<name>/ subdirectory
+  - Creates reference/slides/<name>/ subdirectory
   - Saves raw.txt (all slide text, slide by slide)
   - Saves summary.md if raw text > 10KB
 
@@ -24,7 +24,9 @@ except ImportError:
     print("python-pptx is required: pip install python-pptx")
     sys.exit(1)
 
-SLIDES_DIR = os.path.join("docs", "slides")
+# Resolved from the repository root, not the current working directory.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from doe_paths import SLIDES_DIR  # noqa: E402
 
 # ---- Helper: sanitize pptx filename to directory name ----
 def pptx_to_dirname(filename):

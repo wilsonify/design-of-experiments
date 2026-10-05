@@ -6,12 +6,17 @@ import sys
 
 sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
-# Resolve docs/ relative to this script so the tooling is portable.
-DOCS = os.path.dirname(os.path.abspath(__file__))
+# Resolve the reference/archive trees from the repository root so the tooling
+# is portable and does not depend on the caller's working directory.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from doe_paths import default_targets  # noqa: E402
+
+TARGETS = default_targets()
 
 issues = []
 
-for root, dirs, files in os.walk(DOCS):
+for target in TARGETS:
+  for root, dirs, files in os.walk(target):
     if "summary.md" not in files:
         continue
     summary_path = os.path.join(root, "summary.md")
@@ -49,7 +54,8 @@ else:
 
 # Also show summary of all summary.md sizes
 print("\n=== Summary sizes ===")
-for root, dirs, files in os.walk(DOCS):
+for target in TARGETS:
+  for root, dirs, files in os.walk(target):
     if "summary.md" in files:
         path = os.path.join(root, "summary.md")
         size = os.path.getsize(path)

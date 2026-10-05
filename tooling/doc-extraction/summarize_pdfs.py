@@ -14,7 +14,7 @@ this script:
   - Keeps total summary size reasonable (~2–7 KB per document)
 
 Usage:
-    python summarize_pdfs.py            # scan all docs/ subdirs with raw.txt
+    python summarize_pdfs.py            # scan reference/ and archive/course/extracted/
     python summarize_pdfs.py <dir>      # summarize only <dir>/raw.txt
 """
 
@@ -22,8 +22,11 @@ import os
 import re
 import sys
 
-# Resolve docs/ relative to this script so the tooling is portable.
-DOCS_DIR = os.path.dirname(os.path.abspath(__file__))
+# Resolve the reference/archive trees from the repository root so the tooling
+# is portable and does not depend on the caller's working directory.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from doe_paths import default_targets  # noqa: E402
+
 MIN_SIZE_FOR_SUMMARY = 10_000        # only summarize raw.txt > 10 KB
 MAX_KEY_CONCEPTS_WORDS = 200         # ~200 words for the Key Concepts section
 MAX_SECTION_OUTLINE = 15             # cap number of section-level one-liners
@@ -432,9 +435,9 @@ def process_directory(dirpath: str) -> tuple[int, str]:
 
 
 def main():
-    """Walk all directories under docs/ that contain raw.txt and summarize them."""
-    # Allow targeting a single directory
-    targets = sys.argv[1:] if len(sys.argv) > 1 else [DOCS_DIR]
+    """Walk the reference and archive trees and summarize every raw.txt."""
+    # Allow targeting specific directories; default to the whole corpus.
+    targets = sys.argv[1:] if len(sys.argv) > 1 else default_targets()
 
     results: list[tuple[str, int, str]] = []
 
