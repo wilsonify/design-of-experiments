@@ -39,12 +39,18 @@ MAX_SECTION_LEN = 120
 MIN_TERM_LEN = 3
 MAX_TERM_LEN = 40
 
-_SECTION_RE = re.compile(
-    r'^(\d+\.[\d\.]*\s+[A-Z]|Chapter\s+\w+|[A-Z][a-z]+:|Section\s+)'
+# Section-header shapes, one pattern per shape (a single alternation of all four
+# is too complex for readers and for static analysis): numbered ("2.3 Model"),
+# labelled ("Chapter 4", "Section 4"), or a capitalised label ("Overview:").
+_SECTION_RES = (
+    re.compile(r'^\d+\.[\d\.]*\s+[A-Z]'),
+    re.compile(r'^Chapter\s+\w+'),
+    re.compile(r'^[A-Z][a-z]+:'),
+    re.compile(r'^Section\s+'),
 )
 _PAGE_NUMBER_RE = re.compile(r'^\d+$')
-_FIGURE_RE = re.compile(r'(Figure\s*[\d\.]+[\u2014\-\s].*?\n)')
-_TABLE_RE = re.compile(r'(Table\s*[\d\.]+[\u2014\-\s].*?\n)')
+_FIGURE_RE = re.compile(r'(Figure\s*[\d\.]+[\u2014\-\s][^\n]*\n)')
+_TABLE_RE = re.compile(r'(Table\s*[\d\.]+[\u2014\-\s][^\n]*\n)')
 _CAPITAL_TERM_RE = re.compile(r'\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\b')
 
 
@@ -83,7 +89,8 @@ def _collect_sections(lines):
     return [
         stripped
         for stripped in (line.strip() for line in lines)
-        if len(stripped) < MAX_SECTION_LEN and _SECTION_RE.match(stripped)
+        if len(stripped) < MAX_SECTION_LEN
+        and any(pattern.match(stripped) for pattern in _SECTION_RES)
     ]
 
 def _collect_intro(lines, limit=MAX_INTRO_LINES):
@@ -128,7 +135,7 @@ def _render_key_terms(parts, top_terms):
     for term, freq in top_terms[:MAX_KEY_TERMS]:
         parts.append(f"- **{term}** (appears {freq} times)\n")
 
-def simple_summarize(text, max_chars=3000):
+def simple_summarize(text):
     """
     Generate a summary using a simple extract-and-condense approach:
     - Extract section headings, figure captions, first/last paragraphs
@@ -231,7 +238,7 @@ def _write_summary(out_dir, filename, raw_path, text):
         return 0
 
     summary_path = os.path.join(out_dir, "summary.md")
-    print(f"  -> Generating summary.md")
+    print("  -> Generating summary.md")
 
     # Use a chunked approach for very large texts
     summary = simple_summarize(text)
