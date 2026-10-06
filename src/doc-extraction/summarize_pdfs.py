@@ -27,10 +27,21 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from doe_paths import default_targets  # noqa: E402
 
+RAW_FILENAME = "raw.txt"
+SUMMARY_FILENAME = "summary.md"
+
 MIN_SIZE_FOR_SUMMARY = 10_000        # only summarize raw.txt > 10 KB
 MAX_KEY_CONCEPTS_WORDS = 200         # ~200 words for the Key Concepts section
 MAX_SECTION_OUTLINE = 15             # cap number of section-level one-liners
 MAX_INTRO_SENTENCES = 6              # cap number of intro sentences shown
+
+MAX_HEADING_LEN = 140                # headings longer than this are prose
+MIN_PARAGRAPH_LEN = 30               # merged paragraph must be longer than this
+MAX_FORMULA_LINES = 400              # longest line still considered a formula
+MAX_FORMULAS = 20                    # cap number of formulas listed
+MAX_FIGURES = 12                     # cap number of figures listed
+MAX_TABLES = 10                      # cap number of tables listed
+MAX_R_FUNCTIONS = 30                 # cap number of R functions listed
 
 # Matches PDF page-header footer artefacts like "2 INTRODUCTION" or "12 INTRODUCTION"
 _PAGE_HEADER_RE = re.compile(r'^\d+\s+[A-Z][A-Z\s&-]+$')
@@ -58,6 +69,17 @@ _CC_BLOCK_RE = re.compile(
 
 # Sentence splitter: splits on ". " / "? " / "! " boundaries
 _SENT_RE = re.compile(r'(?<=[.!?])\s+')
+
+# Section headings: numbered ("3.2 Model"), all-caps ("CHAPTER TWO"), or
+# labelled ("Section 4", "Chapter 4").
+_HEADING_RES = (
+    re.compile(r'^\d+[\.\d]*\s+[A-Z]'),
+    re.compile(r'^[A-Z][A-Z\s&-]{4,}$'),
+    re.compile(r'^Section\s+\d+', re.IGNORECASE),
+    re.compile(r'^Chapter\s+\d+', re.IGNORECASE),
+)
+_TRAILING_PAGE_NUMBER_RE = re.compile(r'\s+\d+$')
+_SHOUTED_WORD_RE = re.compile(r'^[A-Z]+$')
 
 # Math-symbol characters that indicate a formula line
 _MATH_CHARS = r'αβσμχ²τργδεθλνπω'
@@ -98,37 +120,32 @@ def _is_skippable_line(stripped: str) -> bool:
     return False
 
 
+def _flush_paragraph(paragraphs: list[str], current: list[str]) -> None:
+    """Append the buffered lines to *paragraphs* when they form a real block."""
+    if current and len(' '.join(current)) > MIN_PARAGRAPH_LEN:
+        paragraphs.append(' '.join(current))
+
+
 def extract_paragraphs(text: str) -> list[str]:
     """
     Group raw PDF text lines into clean paragraphs.
 
     PDF extraction inserts line-breaks mid-word/mid-sentence and page-number /
-    page-header lines.  Page-header and page-number lines are silently dropped
-    (without flushing the current paragraph) so that text flowing across pages
-    is re-joined correctly.  Genuine blank lines terminate paragraphs.
+    page-header lines.  ``_is_skippable_line`` treats those — and blank lines —
+    as artefacts, so every artefact line is dropped without flushing (the text
+    flowing across a page break is re-joined) and the surviving lines are
+    grouped into paragraph blocks.
     """
-    raw_lines = text.split('\n')
     paragraphs: list[str] = []
     current: list[str] = []
 
-    for line in raw_lines:
+    for line in text.split('\n'):
         stripped = line.strip()
-
         if _is_skippable_line(stripped):
-            # Artefact line: skip WITHOUT flushing — the paragraph likely
-            # continues on the next page.
             continue
+        current.append(stripped)
 
-        if not stripped:
-            # blank line → end of paragraph
-            if current and len(' '.join(current)) > 30:
-                paragraphs.append(' '.join(current))
-            current = []
-        else:
-            current.append(stripped)
-
-    if current and len(' '.join(current)) > 30:
-        paragraphs.append(' '.join(current))
+    _flush_paragraph(paragraphs, current)
 
     # Merge very short paragraphs (likely PDF artefacts) into neighbours
     merged: list[str] = []
@@ -139,8 +156,19 @@ def extract_paragraphs(text: str) -> list[str]:
             merged.append(p)
 
     # Filter out paragraphs with too few words
-    clean = [p for p in merged if len(p.split()) >= 6]
-    return clean
+    return [p for p in merged if len(p.split()) >= 6]
+
+
+def _looks_like_heading(stripped: str) -> bool:
+    """True when a line has the shape of a section/subsection heading."""
+    return any(pattern.match(stripped) for pattern in _HEADING_RES)
+
+
+def _is_heading_noise(stripped: str) -> bool:
+    """True for page-header, ISBN, or licence lines masquerading as headings."""
+    if _PAGE_HEADER_RE.match(stripped):
+        return True
+    return bool(_ISBN_RE.match(stripped) or _LICENSE_RE.search(stripped))
 
 
 def extract_headings(text: str) -> list[str]:
@@ -150,49 +178,39 @@ def extract_headings(text: str) -> list[str]:
     Filters out page-header artefacts, ISBN lines, and license text.
     """
     headings = []
-    lines = text.split('\n')
-    for line in lines:
+
+    for line in text.split('\n'):
         stripped = line.strip()
 
-        # Must look like a heading (starts with a number + capital, or is all-caps)
-        looks_like_heading = (
-            re.match(r'^\d+[\.\d]*\s+[A-Z]', stripped)
-            or re.match(r'^[A-Z][A-Z\s&-]{4,}$', stripped)
-            or re.match(r'^Section\s+\d+', stripped, re.IGNORECASE)
-            or re.match(r'^Chapter\s+\d+', stripped, re.IGNORECASE)
-        )
-
-        if not looks_like_heading:
+        if not _looks_like_heading(stripped):
             continue
-        if len(stripped) > 140:
+        if len(stripped) > MAX_HEADING_LEN:
             continue
-
-        # Filter out page-header artefacts like "2 INTRODUCTION", "4 INTRODUCTION"
-        if _PAGE_HEADER_RE.match(stripped):
-            continue
-
-        # Filter out ISBN and licence lines
-        if _ISBN_RE.match(stripped) or _LICENSE_RE.search(stripped):
+        if _is_heading_noise(stripped):
             continue
 
         # Strip trailing page numbers from headings: "10.1 Discussion 145" → "10.1 Discussion"
         # Done BEFORE the all-caps check so "CHAPTER 1" → "CHAPTER" is caught.
-        stripped = re.sub(r'\s+\d+$', '', stripped)
+        stripped = _TRAILING_PAGE_NUMBER_RE.sub('', stripped)
 
         # Skip single-word all-caps headings (e.g., "CHAPTER", "CONTENTS")
         # Check AFTER stripping trailing page numbers.
-        if re.match(r'^[A-Z]+$', stripped):
+        if _SHOUTED_WORD_RE.match(stripped):
             continue
 
         headings.append(stripped)
 
-    # De-duplicate while preserving order
+    return _dedupe_preserving_order(headings)
+
+
+def _dedupe_preserving_order(items: list[str]) -> list[str]:
+    """Return *items* without duplicates, keeping first-seen order."""
     seen: set[str] = set()
     unique: list[str] = []
-    for h in headings:
-        if h not in seen:
-            seen.add(h)
-            unique.append(h)
+    for item in items:
+        if item not in seen:
+            seen.add(item)
+            unique.append(item)
     return unique
 
 
@@ -239,6 +257,20 @@ def extract_key_concepts(paragraphs: list[str], max_words: int = MAX_KEY_CONCEPT
     return ' '.join(collected).strip()
 
 
+def _is_formula_line(stripped: str) -> bool:
+    """True when a line looks like (part of) a formula."""
+    return bool(_MATH_RE.search(stripped)) and 10 < len(stripped) < MAX_FORMULA_LINES
+
+
+def _flush_formula_block(formulas: list[str], block: list[str]) -> None:
+    """Append a completed multi-line formula block when it is substantial."""
+    if not block:
+        return
+    combined = ' '.join(block)
+    if len(combined) > 15:
+        formulas.append(combined)
+
+
 def extract_formulas(text: str) -> list[str]:
     """
     Extract mathematical / statistical formulas.
@@ -246,34 +278,19 @@ def extract_formulas(text: str) -> list[str]:
     Groups consecutive lines containing math symbols into single formula
     blocks (PDF formulas often span multiple lines).
     """
-    lines = text.split('\n')
     formulas: list[str] = []
-    current_block: list[str] = []
+    block: list[str] = []
 
-    for line in lines:
+    for line in text.split('\n'):
         stripped = line.strip()
-        if _MATH_RE.search(stripped) and 10 < len(stripped) < 400:
-            current_block.append(stripped)
-        else:
-            if current_block:
-                combined = ' '.join(current_block)
-                if len(combined) > 15:
-                    formulas.append(combined)
-                current_block = []
+        if _is_formula_line(stripped):
+            block.append(stripped)
+            continue
+        _flush_formula_block(formulas, block)
+        block = []
 
-    if current_block:
-        combined = ' '.join(current_block)
-        if len(combined) > 15:
-            formulas.append(combined)
-
-    # De-duplicate
-    seen: set[str] = set()
-    unique = []
-    for f in formulas:
-        if f not in seen:
-            seen.add(f)
-            unique.append(f)
-    return unique[:20]
+    _flush_formula_block(formulas, block)
+    return _dedupe_preserving_order(formulas)[:MAX_FORMULAS]
 
 
 def extract_r_functions(text: str) -> list[str]:
@@ -282,7 +299,7 @@ def extract_r_functions(text: str) -> list[str]:
     unique: list[str] = []
     for f in r_funcs:
         name = f.strip()
-        if name not in unique and len(unique) < 30:
+        if name not in unique and len(unique) < MAX_R_FUNCTIONS:
             unique.append(name)
     return unique
 
@@ -302,32 +319,30 @@ def extract_figures(text: str) -> list[str]:
     figs = re.findall(r'Figure\s+\d+[\.\d]*[^\n]{0,120}', text)
     # Keep only those that look like captions, not page-header noise
     clean = [f.strip() for f in figs if len(f.strip()) > 10]
-    # De-duplicate
-    seen: set[str] = set()
-    unique = []
-    for f in clean:
-        if f not in seen:
-            seen.add(f)
-            unique.append(f)
-    return unique[:12]
+    return _dedupe_preserving_order(clean)[:MAX_FIGURES]
 
 
 def extract_tables(text: str) -> list[str]:
     """Extract Table references."""
     tabs = re.findall(r'Table\s+\d+[\.\d]*[^\n]{0,120}', text)
     clean = [t.strip() for t in tabs if len(t.strip()) > 10]
-    seen: set[str] = set()
-    unique = []
-    for t in clean:
-        if t not in seen:
-            seen.add(t)
-            unique.append(t)
-    return unique[:10]
+    return _dedupe_preserving_order(clean)[:MAX_TABLES]
 
 
 # --------------------------------------------------------------------------- #
 #  Summary builder
 # --------------------------------------------------------------------------- #
+def _append_section(parts: list[str], title: str, rendered_items: list[str],
+                    trailing_blank: bool = True) -> None:
+    """Append a markdown section unless it has no content."""
+    if not rendered_items:
+        return
+    parts.append(f"## {title}\n\n")
+    parts.extend(rendered_items)
+    if trailing_blank:
+        parts.append("\n")
+
+
 def generate_summary(text: str, filename: str) -> str:
     """Produce a concise markdown summary for a single raw.txt file."""
     lines = text.split('\n')
@@ -345,20 +360,13 @@ def generate_summary(text: str, filename: str) -> str:
 
     # ---- Introduction (first sentences of first few paragraphs) ----
     intro_sents = extract_first_sentences(paragraphs)
-    if intro_sents:
-        parts.append("## Introduction\n\n")
-        for s in intro_sents:
-            parts.append(f"- {s}\n")
-        parts.append("\n")
+    _append_section(parts, "Introduction", [f"- {s}\n" for s in intro_sents])
 
     # ---- Section outline ----
-    if headings:
-        parts.append("## Section Outline\n\n")
-        for h in headings:
-            parts.append(f"- {h}\n")
-        if len(headings) >= MAX_SECTION_OUTLINE:
-            parts.append(f"- ... and more sections\n")
-        parts.append("\n")
+    outline = [f"- {h}\n" for h in headings]
+    if len(headings) >= MAX_SECTION_OUTLINE:
+        outline.append("- ... and more sections\n")
+    _append_section(parts, "Section Outline", outline)
 
     # ---- Key Concepts (~200 words) ----
     key_concepts = extract_key_concepts(paragraphs)
@@ -368,11 +376,7 @@ def generate_summary(text: str, filename: str) -> str:
 
     # ---- Formulas ----
     formulas = extract_formulas(text)
-    if formulas:
-        parts.append("## Key Formulas\n\n")
-        for f in formulas:
-            parts.append(f"- `{f}`\n")
-        parts.append("\n")
+    _append_section(parts, "Key Formulas", [f"- `{f}`\n" for f in formulas])
 
     # ---- R Functions ----
     r_funcs = extract_r_functions(text)
@@ -388,18 +392,12 @@ def generate_summary(text: str, filename: str) -> str:
 
     # ---- Figures ----
     figures = extract_figures(text)
-    if figures:
-        parts.append("## Figures\n\n")
-        for fig in figures:
-            parts.append(f"- {fig}\n")
-        parts.append("\n")
+    _append_section(parts, "Figures", [f"- {fig}\n" for fig in figures])
 
-    # ---- Tables ----
+    # ---- Tables (no trailing blank line, unlike the other sections) ----
     tables = extract_tables(text)
-    if tables:
-        parts.append("## Tables\n\n")
-        for tbl in tables:
-            parts.append(f"- {tbl}\n")
+    _append_section(parts, "Tables", [f"- {tbl}\n" for tbl in tables],
+                    trailing_blank=False)
 
     return ''.join(parts)
 
@@ -409,8 +407,8 @@ def generate_summary(text: str, filename: str) -> str:
 # --------------------------------------------------------------------------- #
 def process_directory(dirpath: str) -> tuple[int, str]:
     """Process a single directory that contains raw.txt."""
-    raw_path = os.path.join(dirpath, "raw.txt")
-    summary_path = os.path.join(dirpath, "summary.md")
+    raw_path = os.path.join(dirpath, RAW_FILENAME)
+    summary_path = os.path.join(dirpath, SUMMARY_FILENAME)
 
     if not os.path.exists(raw_path):
         return 0, "no raw.txt"
@@ -434,26 +432,32 @@ def process_directory(dirpath: str) -> tuple[int, str]:
     return file_size, f"summary written ({os.path.getsize(summary_path):,} bytes)"
 
 
+def _record_result(results: list[tuple[str, int, str]], dirpath: str) -> None:
+    """Summarize *dirpath* and record it when it holds a sizable raw.txt."""
+    size, status = process_directory(dirpath)
+    if size > 0:
+        results.append((dirpath, size, status))
+
+
+def _collect_results(results: list[tuple[str, int, str]], target: str) -> None:
+    """Record every raw.txt under *target* (or *target* itself)."""
+    if not os.path.isdir(target):
+        # Treat as a directory containing raw.txt
+        _record_result(results, target)
+        return
+    for root, dirs, files in os.walk(target):
+        if RAW_FILENAME in files:
+            _record_result(results, root)
+
+
 def main():
     """Walk the reference and archive trees and summarize every raw.txt."""
     # Allow targeting specific directories; default to the whole corpus.
     targets = sys.argv[1:] if len(sys.argv) > 1 else default_targets()
 
     results: list[tuple[str, int, str]] = []
-
     for target in targets:
-        if os.path.isdir(target):
-            for root, dirs, files in os.walk(target):
-                if "raw.txt" in files:
-                    size, status = process_directory(root)
-                    if size > 0:
-                        results.append((root, size, status))
-        else:
-            # Treat as a directory containing raw.txt
-            dirpath = target
-            size, status = process_directory(dirpath)
-            if size > 0:
-                results.append((dirpath, size, status))
+        _collect_results(results, target)
 
     # Print results sorted by file size (largest first)
     print(f"Processed {len(results)} files with raw.txt\n")
