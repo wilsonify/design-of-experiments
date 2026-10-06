@@ -113,8 +113,7 @@ def extract_shape_text(shape, lines, depth=0):
 def extract_slide_text(slide):
     """Return list of text lines for one slide, in visual order."""
     lines = []
-    shapes = list(slide.shapes)
-    for shape in sorted(shapes, key=shape_sort_key):
+    for shape in sorted(slide.shapes, key=shape_sort_key):
         extract_shape_text(shape, lines)
     return lines
 
