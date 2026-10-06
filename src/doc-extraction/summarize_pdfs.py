@@ -73,12 +73,16 @@ _SENT_RE = re.compile(r'(?<=[.!?])\s+')
 # Section headings: numbered ("3.2 Model"), all-caps ("CHAPTER TWO"), or
 # labelled ("Section 4", "Chapter 4").
 _HEADING_RES = (
-    re.compile(r'^\d+[\.\d]*\s+[A-Z]'),
+    re.compile(r'^\d[\d.]*\s+[A-Z]'),
     re.compile(r'^[A-Z][A-Z\s&-]{4,}$'),
     re.compile(r'^Section\s+\d+', re.IGNORECASE),
     re.compile(r'^Chapter\s+\d+', re.IGNORECASE),
 )
-_TRAILING_PAGE_NUMBER_RE = re.compile(r'\s+\d+$')
+# Trailing page-number artefact: "10.1 Discussion 145" -> "10.1 Discussion".
+# Only ever applied to lines already capped at MAX_HEADING_LEN characters, so the
+# bounded whitespace run matches exactly what "\s+" would; the open-ended form
+# makes a partial ".sub()" match backtrack polynomially (Sonar S8786).
+_TRAILING_PAGE_NUMBER_RE = re.compile(r'\s{1,200}\d+$')
 _SHOUTED_WORD_RE = re.compile(r'^[A-Z]+$')
 
 # Math-symbol characters that indicate a formula line
