@@ -74,10 +74,10 @@ interaction.plot(x, Brand, Bdish$y, type="l" ,xlab="Soap Amount B",ylab="Average
 # Example 13 p. 281
 library(FrF2)
 Bff <- FrF2(16, 8, generators = c("BCD", "ACD", "ABC", "ABD"),
-            blocks = c("AB", "AC", "AD"),randomize = FALSE)
+            blocks = c("AB", "AC", "AD"), alias.block.2fis = TRUE,
+            randomize = FALSE)
 weight <- c(0.0, 9.0, 5.35, 9.90, 4.35, 8.8, 6.8, 3.93,
-            9.25, 4.9, 7.43, 2.6, 0.0, 7.
-            43, 4.87, 10.2)
+            9.25, 4.9, 7.43, 2.6, 0.0, 7.43, 4.87, 10.2)
 add.response(Bff, response = weight)
 
 # Example 14 p. 281
