@@ -63,5 +63,5 @@ names(nozzle)
 
 time <- read.csv(file.choose(), header=TRUE)
 
-(Problem 6- Interaction Sum Squares)
+# (Problem 6- Interaction Sum Squares)
 
