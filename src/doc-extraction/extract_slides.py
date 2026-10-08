@@ -19,7 +19,6 @@ import traceback
 
 try:
     from pptx import Presentation
-    from pptx.util import Emu
 except ImportError:
     print("python-pptx is required: pip install python-pptx")
     sys.exit(1)
