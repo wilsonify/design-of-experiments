@@ -8,7 +8,7 @@ E <- c(7, 10, 11, 15, 11)
 temp <- c(A,B,C,D,E)                 #  combines A,B,C,D,E into a single column vector, length=25
 temp
 
-[1]  7  7 15 11  9 12 17 12 18 18 14 18 18 19 19 19 25 22 19 23  7 10 11 15 11
+# [1]  7  7 15 11  9 12 17 12 18 18 14 18 18 19 19 19 25 22 19 23  7 10 11 15 11
 
 # rep():  repeat a pattern ;  factor():  convert characters into a factor
 
