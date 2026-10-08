@@ -61,7 +61,14 @@ with(bha, (interaction.plot(treat, strain, y, type = "b",
                             xlab = "BHA Treated", ylab = "average EROD")))
 
 # Example 8 p. 126
+# Note: the Example 2 listing above bound `rcb` to agricolae's design book
+# (plots/block/treat), which masks the daewr data frame of the same name that
+# this example needs — R prints "rcb masked by '.GlobalEnv'" on the library()
+# line above. data(rcb)
+# re-binds it to daewr's version (id/teehgt/cdistance), as the printed listing
+# assumes.
 library(daewr)
+data(rcb)
 mod4 <- aov(cdistance ~ teehgt + Error(id/teehgt), data = rcb)
 summary(mod4)
 
