@@ -11,7 +11,6 @@ For each PDF:
 import os
 import re
 import sys
-import io
 import traceback
 
 # Resolve the reference tree relative to the repository root, not this script,
