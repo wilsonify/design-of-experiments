@@ -130,5 +130,24 @@ sugar.dun <- glht(mod4, linfct = mcp( treat = "Dunnett"),
 alternative = "greater")
 summary(sugar.dun)
 
+# Example 20 p. 48
+# The book introduces this listing conditionally — "if the data for the file
+# download experiment were contained in a data frame called download" — and no
+# such data frame exists anywhere reachable: daewr ships 66 data sets and none
+# is named `download`, and p. 46 prints only the five site means (B 2.73,
+# D 3.20, A 3.79, C 4.03, E 5.27), never the observations. The listing is
+# transcribed as printed and runs only if the reader supplies the data frame,
+# so this script still exits 0 for `Rscript src/examples/Chapter2.R`.
+if (exists("download") && is.data.frame(download)) {
+  aov.ex <- aov(time ~ site, data = download)
+  K <- rbind( c( 1, -1, 0, 0, 0), c(0, -1, 1, 0, 0),
+              c(0, -1, 0, 1, 0), c(0, -1, 0, 0, 1) )
+  rownames(K) <- c( "A-B", "C-B", "D-B", "E-B" )
+  colnames(K) <- names(coef (aov.ex))
+  dht <- glht( aov.ex, linfct = mcp( site = "Dunnett" ),
+               alternative = "two.sided")
+  summary(dht)
+}
+
 
 
